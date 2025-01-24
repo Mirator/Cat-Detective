@@ -4,7 +4,6 @@ public class GameManager : MonoBehaviour
 {
     public void WinGame()
     {
-        Debug.Log("You Win!");
         // Add logic for showing a win screen or transitioning to the next level
         ShowEndGameMessage("You Win!");
     }

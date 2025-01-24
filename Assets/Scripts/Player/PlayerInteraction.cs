@@ -30,7 +30,7 @@ public class PlayerInteraction : MonoBehaviour
             }
             else if (hit.CompareTag("MasterVillager"))
             {
-                PuzzleManager puzzleManager = FindObjectOfType<PuzzleManager>();
+                PuzzleManager puzzleManager = FindFirstObjectByType<PuzzleManager>();
                 if (puzzleManager != null)
                 {
                     puzzleManager.InteractWithMasterVillager(); // Start location selection

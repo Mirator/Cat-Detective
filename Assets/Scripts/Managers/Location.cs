@@ -1,8 +1,9 @@
 public enum Location
 {
-    Forest,
-    Cave,
-    Village,
-    Mountain,
-    River
+    Garden,
+    Bakery,
+    Barn,
+    Treehouse,
+    Riverbank,
+    Market
 }
