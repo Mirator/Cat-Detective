@@ -2,24 +2,38 @@ using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    public GameObject bubblePrefab; // Assign the Bubble prefab
     public float interactionRadius = 1.5f; // Interaction range
+    private Villager currentVillager;
     private GameObject currentBubble;
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
-            foreach (Collider2D hit in hits)
+            InteractWithNearbyObjects();
+        }
+    }
+
+    void InteractWithNearbyObjects()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
+        foreach (Collider2D hit in hits)
+        {
+            if (hit.CompareTag("Villager"))
             {
-                if (hit.CompareTag("Villager"))
+                Villager villager = hit.GetComponent<Villager>();
+                if (villager != null)
                 {
-                    Villager villager = hit.GetComponent<Villager>();
-                    if (villager != null)
-                    {
-                        ShowBubble(villager);
-                    }
+                    villager.Interact(); // Handle villager interaction
+                    ShowBubble(villager);
+                }
+            }
+            else if (hit.CompareTag("MasterVillager"))
+            {
+                PuzzleManager puzzleManager = FindObjectOfType<PuzzleManager>();
+                if (puzzleManager != null)
+                {
+                    puzzleManager.InteractWithMasterVillager(); // Start location selection
                 }
             }
         }
@@ -32,7 +46,7 @@ public class PlayerInteraction : MonoBehaviour
             Destroy(currentBubble);
         }
 
-        currentBubble = Instantiate(bubblePrefab);
+        currentBubble = Instantiate(villager.bubblePrefab); // Bubble prefab defined in Villager
         Bubble bubbleScript = currentBubble.GetComponent<Bubble>();
 
         if (bubbleScript != null)

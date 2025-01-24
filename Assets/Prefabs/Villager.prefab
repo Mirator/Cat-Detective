@@ -148,3 +148,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clueText: 
+  bubblePrefab: {fileID: 9061002316118646731, guid: 225536716b8c04e71a47c72120982bed, type: 3}
+  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}

@@ -12,6 +12,6 @@ public class Bubble : MonoBehaviour
 
     public void SetPosition(Vector3 position)
     {
-        transform.position = position + new Vector3(0, 1.5f, 0); // Offset above the villager
+        transform.position = position + new Vector3(0.75f, 1.0f, 0); // Offset above the villager
     }
 }
