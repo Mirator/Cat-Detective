@@ -27,8 +27,28 @@ public class ClueGenerator
         int incorrectClueCount = Mathf.Clamp((int)(numberOfVillagers * Random.Range(0.1f, 0.25f)), 0, numberOfVillagers - correctClueCount);
         int randomClueCount = numberOfVillagers - correctClueCount - incorrectClueCount;
 
+        // Ensure at least one incorrect clue
+        if (incorrectClueCount == 0)
+        {
+            incorrectClueCount = 1;
+
+            if (randomClueCount > 0)
+            {
+                randomClueCount--; // Reduce random clues to make room
+            }
+            else if (correctClueCount > 1)
+            {
+                correctClueCount--; // Reduce correct clues as a fallback
+            }
+            else
+            {
+                Debug.LogWarning("Insufficient villagers to guarantee at least one incorrect clue.");
+            }
+        }
+
         Debug.Log($"Clues: {correctClueCount} correct, {incorrectClueCount} incorrect, {randomClueCount} random");
 
+        // Generate the clues
         clues.AddRange(GenerateCorrectClues(correctClueCount));
         clues.AddRange(GenerateIncorrectClues(incorrectClueCount));
         clues.AddRange(GenerateRandomClues(randomClueCount));
@@ -36,18 +56,27 @@ public class ClueGenerator
         return clues;
     }
 
+
     private List<Clue> GenerateCorrectClues(int count)
     {
         List<Clue> correctClues = new List<Clue>();
-        List<Location> path = map.GetPathTo(finalLocation);
+        List<Location> path = new List<Location>(map.GetPathTo(finalLocation));
 
-        for (int i = 0; i < count && path.Count > 1; i++)
+        if (path == null || path.Count < 2)
         {
-            Location seenAt = path[0];
-            Location nextLocation = path[1];
-            path.RemoveAt(0);
+            Debug.LogWarning("No valid path found to the final location.");
+            return correctClues;
+        }
 
-            string time = times[Random.Range(0, times.Length)];
+        Debug.Log($"Generating correct clues for path: {string.Join(" -> ", path)}");
+
+        // Generate clues for the path
+        int steps = Mathf.Min(count, path.Count - 1);
+        for (int i = 0; i < steps; i++)
+        {
+            Location seenAt = path[i];
+            Location nextLocation = path[i + 1];
+            string time = times[Mathf.Clamp(i, 0, times.Length - 1)];
 
             correctClues.Add(new Clue
             {
@@ -64,6 +93,7 @@ public class ClueGenerator
 
         return correctClues;
     }
+
 
     private List<Clue> GenerateIncorrectClues(int count)
     {
