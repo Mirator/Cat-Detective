@@ -6,16 +6,18 @@ public class VillagerManager : MonoBehaviour
     public GameObject villagerPrefab; // Prefab for villagers
     public Transform[] spawnPoints; // Spawn points for villagers
     public string[] times = { "Morning", "Late Morning", "Noon", "Afternoon", "Evening" }; // Available times
-    public List<Location> locations; // List of locations in the game
+    public List<Location> locations; // List of all locations in the game
 
     private FinalLocationManager finalLocationManager;
-    private PuzzleManager puzzleManager; // Reference to PuzzleManager
+    private Graph<Location> map;
 
     void Start()
     {
         InitializeLocations();
 
-        // Find FinalLocationManager
+        // Create the map
+        map = MapManager.CreateMap();
+
         finalLocationManager = FindFirstObjectByType<FinalLocationManager>();
         if (finalLocationManager == null)
         {
@@ -23,22 +25,10 @@ public class VillagerManager : MonoBehaviour
             return;
         }
 
-        // Find PuzzleManager
-        puzzleManager = FindFirstObjectByType<PuzzleManager>();
-        if (puzzleManager == null)
-        {
-            Debug.LogError("PuzzleManager not found in the scene!");
-            return;
-        }
-
-        // Set the final location in both managers
         finalLocationManager.SetFinalLocation(locations);
         Location finalLocation = finalLocationManager.GetFinalLocation();
-        puzzleManager.SetFinalLocation(finalLocation);
 
-        // Build the map and generate clues
-        Graph<Location> map = BuildGraph();
-        GenerateAndAssignClues(finalLocation, map);
+        GenerateAndAssignClues(finalLocation);
     }
 
     /// <summary>
@@ -54,30 +44,9 @@ public class VillagerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Builds a graph representation of the map.
-    /// </summary>
-    /// <returns>The graph representing the map.</returns>
-    private Graph<Location> BuildGraph()
-    {
-        Graph<Location> map = new Graph<Location>();
-
-        // Define map connections
-        map.AddEdge(Location.Garden, Location.Bakery);
-        map.AddEdge(Location.Bakery, Location.Treehouse);
-        map.AddEdge(Location.Bakery, Location.Market);
-        map.AddEdge(Location.Treehouse, Location.Barn);
-        map.AddEdge(Location.Market, Location.Barn);
-        map.AddEdge(Location.Market, Location.Riverbank);
-
-        return map;
-    }
-
-    /// <summary>
     /// Generates and assigns clues to villagers.
     /// </summary>
-    /// <param name="finalLocation">The final location for the correct path.</param>
-    /// <param name="map">The graph representing the map.</param>
-    private void GenerateAndAssignClues(Location finalLocation, Graph<Location> map)
+    private void GenerateAndAssignClues(Location finalLocation)
     {
         if (villagerPrefab == null)
         {
@@ -93,11 +62,6 @@ public class VillagerManager : MonoBehaviour
 
         ClueGenerator clueGenerator = new ClueGenerator(map, times, spawnPoints.Length, finalLocation);
         List<Clue> clues = clueGenerator.GenerateClues();
-
-        if (spawnPoints.Length > clues.Count)
-        {
-            Debug.LogWarning("Not enough clues for all villagers. Some villagers may not have clues.");
-        }
 
         for (int i = 0; i < spawnPoints.Length; i++)
         {

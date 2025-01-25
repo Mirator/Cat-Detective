@@ -62,13 +62,18 @@ public class ClueGenerator
         List<Clue> correctClues = new List<Clue>();
         List<Location> path = new List<Location>(map.GetPathTo(finalLocation));
 
-        if (path == null || path.Count < 2)
+        // Ensure the path ends at the final location
+        if (path == null || !path.Contains(finalLocation))
         {
             Debug.LogWarning("No valid path found to the final location.");
             return correctClues;
         }
 
-        Debug.Log($"Generating correct clues for path: {string.Join(" -> ", path)}");
+        // Truncate the path to stop at the final location
+        int finalIndex = path.IndexOf(finalLocation);
+        path = path.GetRange(0, finalIndex + 1);
+
+        Debug.Log($"Generating correct clues for truncated path: {string.Join(" -> ", path)}");
 
         // Generate clues for the path
         int steps = Mathf.Min(count, path.Count - 1);
@@ -93,6 +98,7 @@ public class ClueGenerator
 
         return correctClues;
     }
+
 
     private List<Clue> GenerateIncorrectClues(int count)
     {
