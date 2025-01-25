@@ -29,6 +29,15 @@ public static class ClueIconManager
 
     public static Sprite GetIconForLocation(Location location)
     {
-        return locationIcons.ContainsKey(location) ? locationIcons[location] : null;
+        if (locationIcons.ContainsKey(location))
+        {
+            Debug.Log($"Icon found for location: {location}");
+            return locationIcons[location];
+        }
+        else
+        {
+            Debug.LogWarning($"No icon found for location: {location}");
+            return null;
+        }
     }
 }

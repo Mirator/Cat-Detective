@@ -7,67 +7,72 @@ public class Bubble : MonoBehaviour
     public Image seenAtIcon;       // Icon for the "seen at" clue
     public Image nextLocationIcon; // Icon for the "next location" clue
 
-public void SetIcons(Sprite time, Sprite seenAt, Sprite nextLocation)
+    public void SetIcons(Sprite time, Sprite seenAt, Sprite nextLocation)
+    {
+        if (timeIcon != null)
+        {
+            Debug.Log($"Time Icon Image Component Exists: {timeIcon}");
+            Debug.Log($"Setting Time Icon to: {time?.name ?? "None"}");
+            timeIcon.sprite = time;
+        }
+
+        if (seenAtIcon != null)
+        {
+            Debug.Log($"SeenAt Icon Image Component Exists: {seenAtIcon}");
+            Debug.Log($"Setting SeenAt Icon to: {seenAt?.name ?? "None"}");
+            seenAtIcon.sprite = seenAt;
+        }
+
+        if (nextLocationIcon != null)
+        {
+            Debug.Log($"NextLocation Icon Image Component Exists: {nextLocationIcon}");
+            Debug.Log($"Setting NextLocation Icon to: {nextLocation?.name ?? "None"}");
+            nextLocationIcon.sprite = nextLocation;
+        }
+    }
+
+/// <summary>
+/// Sets the icons in the bubble based on the provided clue.
+/// </summary>
+public void SetClue(Clue clue)
 {
-    if (timeIcon != null) 
+    if (clue == null)
     {
-        Debug.Log($"Setting Time Icon: {time?.name ?? "None"}");
-        timeIcon.sprite = time;
+        Debug.LogError("Clue is null. Cannot set bubble details.");
+        return;
     }
-    if (seenAtIcon != null) 
+
+    // Set time icon
+    Sprite timeSprite = ClueIconManager.GetIconForTime(clue.Time);
+    if (timeIcon != null)
     {
-        Debug.Log($"Setting SeenAt Icon: {seenAt?.name ?? "None"}");
-        seenAtIcon.sprite = seenAt;
+        timeIcon.sprite = timeSprite;
+        timeIcon.gameObject.SetActive(timeSprite != null);
     }
-    if (nextLocationIcon != null) 
+
+    // Set seenAt icon
+    Sprite seenAtSprite = ClueIconManager.GetIconForLocation(clue.SeenAt);
+    if (seenAtIcon != null)
     {
-        Debug.Log($"Setting NextLocation Icon: {nextLocation?.name ?? "None"}");
-        nextLocationIcon.sprite = nextLocation;
+        seenAtIcon.sprite = seenAtSprite;
+        seenAtIcon.gameObject.SetActive(seenAtSprite != null);
+    }
+
+    // Set nextLocation icon
+    Sprite nextLocationSprite = ClueIconManager.GetIconForLocation(clue.NextLocation);
+    if (nextLocationIcon != null)
+    {
+        nextLocationIcon.sprite = nextLocationSprite;
+        nextLocationIcon.gameObject.SetActive(nextLocationSprite != null);
     }
 }
 
-    /// <summary>
-    /// Sets the icons in the bubble based on the provided clue.
-    /// </summary>
-    public void SetClue(Clue clue)
-    {
-        if (clue == null)
-        {
-            Debug.LogError("Clue is null. Cannot set bubble details.");
-            return;
-        }
 
-        // Set time icon
-        Sprite timeSprite = ClueIconManager.GetIconForTime(clue.Time);
-        if (timeIcon != null)
-        {
-            timeIcon.sprite = timeSprite;
-            timeIcon.gameObject.SetActive(timeSprite != null);
-        }
-
-        // Set seenAt icon
-        Sprite seenAtSprite = ClueIconManager.GetIconForLocation(clue.SeenAt);
-        if (seenAtIcon != null)
-        {
-            seenAtIcon.sprite = seenAtSprite;
-            seenAtIcon.gameObject.SetActive(seenAtSprite != null);
-        }
-
-        // Set nextLocation icon
-        Sprite nextLocationSprite = ClueIconManager.GetIconForLocation(clue.NextLocation);
-        if (nextLocationIcon != null)
-        {
-            nextLocationIcon.sprite = nextLocationSprite;
-            nextLocationIcon.gameObject.SetActive(nextLocationSprite != null);
-        }
-    }
-
-
-    /// <summary>
-    /// Sets the position of the bubble above the villager.
-    /// </summary>
-    public void SetPosition(Vector3 position)
-    {
-        transform.position = position + Vector3.up * 1.5f; // Offset for better visibility
-    }
+/// <summary>
+/// Sets the position of the bubble above the villager.
+/// </summary>
+public void SetPosition(Vector3 position)
+{
+    transform.position = position + Vector3.up * 1.5f; // Offset for better visibility
+}
 }
