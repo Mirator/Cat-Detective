@@ -3,28 +3,34 @@ using UnityEngine;
 
 public class ClueGenerator
 {
-    private List<Location> locationSequence; // Sequential locations for correct clues
-    private List<Location> locationSequenceBackup; // Backup of original locations for resetting
-    private string[] times; // Available times
-    private int numberOfVillagers; // Total number of villagers
-    private Dictionary<Location, List<Location>> mapConnections; // Map connections
+    private List<Location> locationSequence;
+    private List<Location> locationSequenceBackup;
+    private string[] times;
+    private int numberOfVillagers;
+    private Dictionary<Location, List<Location>> mapConnections;
+    private Location finalLocation;
 
-    public ClueGenerator(List<Location> locations, string[] times, Dictionary<Location, List<Location>> mapConnections, int numberOfVillagers)
+    public ClueGenerator(
+        List<Location> locations,
+        string[] times,
+        Dictionary<Location, List<Location>> mapConnections,
+        int numberOfVillagers,
+        Location finalLocation)
     {
         this.locationSequence = new List<Location>(locations);
         this.locationSequenceBackup = new List<Location>(locations);
         this.times = times;
         this.mapConnections = mapConnections;
         this.numberOfVillagers = numberOfVillagers;
+        this.finalLocation = finalLocation;
     }
 
     public List<Clue> GenerateClues()
     {
         List<Clue> clues = new List<Clue>();
-        int correctClueCount = Mathf.CeilToInt(numberOfVillagers * 0.5f); // At least 50% correct clues
+        int correctClueCount = Mathf.CeilToInt(numberOfVillagers * 0.5f);
         int incorrectClueCount = numberOfVillagers - correctClueCount;
 
-        // Generate correct sequential clues
         for (int i = 0; i < correctClueCount; i++)
         {
             Clue correctClue = GenerateSequentialClue();
@@ -34,7 +40,6 @@ public class ClueGenerator
             }
         }
 
-        // Generate incorrect/random clues
         for (int i = 0; i < incorrectClueCount; i++)
         {
             Clue randomClue = GenerateRandomClue();
@@ -56,7 +61,7 @@ public class ClueGenerator
         }
 
         Location seenAt = locationSequence[0];
-        Location nextLocation = locationSequence[1];
+        Location nextLocation = locationSequence.Count == 2 ? finalLocation : locationSequence[1];
         locationSequence.RemoveAt(0);
 
         string time = times[Random.Range(0, times.Length)];
@@ -109,6 +114,6 @@ public class ClueGenerator
             return connections[Random.Range(0, connections.Count)];
         }
 
-        return currentLocation; // Fallback to the same location
+        return currentLocation;
     }
 }

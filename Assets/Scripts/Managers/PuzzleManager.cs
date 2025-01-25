@@ -1,16 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Add this namespace for TextMeshPro support
+using TMPro;
 
 public class PuzzleManager : MonoBehaviour
 {
-    public GameObject puzzleUI; // Reference to the PuzzleUI Canvas
-    public Transform buttonContainer; // Parent object for dynamically created buttons
-    public GameObject buttonPrefab; // Prefab for a UI button
-    public TextMeshProUGUI headerText; // Header text for the UI
-    public Location correctLocation; // Correct location to be chosen
+    public GameObject puzzleUI;
+    public Transform buttonContainer;
+    public GameObject buttonPrefab;
+    public TextMeshProUGUI headerText;
 
     private GameManager gameManager;
+    private Location finalLocation;
 
     void Start()
     {
@@ -20,24 +20,15 @@ public class PuzzleManager : MonoBehaviour
             Debug.LogError("GameManager not found in the scene!");
         }
 
-        SetRandomCorrectLocation();
-        GenerateLocationButtons();
         puzzleUI.SetActive(false); // Ensure UI is initially hidden
     }
 
-    /// <summary>
-    /// Assigns a random location from the enum as the correct location.
-    /// </summary>
-    private void SetRandomCorrectLocation()
+    public void SetFinalLocation(Location location)
     {
-        Location[] allLocations = (Location[])System.Enum.GetValues(typeof(Location));
-        correctLocation = allLocations[Random.Range(0, allLocations.Length)];
-        Debug.Log("Correct location selected: " + correctLocation);
+        finalLocation = location;
+        Debug.Log($"Final location set in PuzzleManager: {finalLocation}");
     }
 
-    /// <summary>
-    /// Dynamically generates buttons for each location.
-    /// </summary>
     private void GenerateLocationButtons()
     {
         Location[] allLocations = (Location[])System.Enum.GetValues(typeof(Location));
@@ -48,32 +39,23 @@ public class PuzzleManager : MonoBehaviour
             Button buttonComponent = newButton.GetComponent<Button>();
             TextMeshProUGUI buttonText = newButton.GetComponentInChildren<TextMeshProUGUI>();
 
-            buttonText.text = location.ToString(); // Set button text to location name
+            buttonText.text = location.ToString();
 
-            // Add a listener to handle button clicks
             buttonComponent.onClick.AddListener(() => SelectLocation(location));
         }
     }
 
-    /// <summary>
-    /// Shows the Puzzle UI for location selection.
-    /// </summary>
     public void InteractWithMasterVillager()
     {
-        puzzleUI.SetActive(true); // Show the UI
-        headerText.text = "Choose a Location:"; // Update the header text
+        puzzleUI.SetActive(true);
+        headerText.text = "Choose a Location:";
     }
 
-    /// <summary>
-    /// Handles player selection of a location.
-    /// </summary>
-    /// <param name="location">The chosen location.</param>
     public void SelectLocation(Location location)
     {
-        puzzleUI.SetActive(false); // Hide the UI after selection
-        Debug.Log("You selected: " + location);
+        puzzleUI.SetActive(false);
 
-        if (location == correctLocation)
+        if (location == finalLocation)
         {
             gameManager.WinGame();
         }
