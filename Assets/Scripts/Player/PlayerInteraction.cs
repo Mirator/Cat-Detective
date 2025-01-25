@@ -39,10 +39,11 @@ public class PlayerInteraction : MonoBehaviour
             }
             else if (hit.CompareTag("MasterVillager"))
             {
-                PuzzleManager puzzleManager = FindFirstObjectByType<PuzzleManager>();
-                if (puzzleManager != null)
+                GamePuzzleManager gamePuzzleManager = FindFirstObjectByType<GamePuzzleManager>();
+
+                if (gamePuzzleManager != null)
                 {
-                    puzzleManager.InteractWithMasterVillager();
+                    gamePuzzleManager.InteractWithMasterVillager();
                 }
             }
         }
