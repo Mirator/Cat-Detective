@@ -72,7 +72,7 @@ public class Villager : MonoBehaviour
     {
         if (assignedClue != null)
         {
-            Debug.Log($"Clue from villager: {GetClueDetails()}");
+            //Debug.Log($"Clue from villager: {GetClueDetails()}");
         }
         else
         {

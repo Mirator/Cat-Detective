@@ -29,7 +29,7 @@ public class ClueTrackerItem : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Setting clue: Time={clue.Time}, SeenAt={clue.SeenAt}, NextLocation={clue.NextLocation}");
+        //Debug.Log($"Setting clue: Time={clue.Time}, SeenAt={clue.SeenAt}, NextLocation={clue.NextLocation}");
 
         Sprite timeSprite = ClueIconManager.GetIconForTime(clue.Time);
         Sprite seenAtSprite = ClueIconManager.GetIconForLocation(clue.SeenAt);
