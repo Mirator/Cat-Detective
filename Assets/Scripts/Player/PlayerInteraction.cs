@@ -39,13 +39,24 @@ public class PlayerInteraction : MonoBehaviour
             }
             else if (hit.CompareTag("MasterVillager"))
             {
-                GamePuzzleManager gamePuzzleManager = FindFirstObjectByType<GamePuzzleManager>();
+                VillagerManager villagerManager = Object.FindFirstObjectByType<VillagerManager>();
+                GamePuzzleManager gamePuzzleManager = Object.FindFirstObjectByType<GamePuzzleManager>();
 
-                if (gamePuzzleManager != null)
+                if (villagerManager == null || gamePuzzleManager == null)
                 {
-                    gamePuzzleManager.InteractWithMasterVillager();
+                    Debug.LogError("VillagerManager or GamePuzzleManager not found in the scene!");
+                    return;
                 }
+
+                // Initialize GamePuzzleManager with the path from VillagerManager
+                if (gamePuzzleManager.GeneratedPath == null)
+                {
+                    gamePuzzleManager.Initialize(villagerManager.GetPath());
+                }
+
+                gamePuzzleManager.InteractWithMasterVillager();
             }
+
         }
     }
 

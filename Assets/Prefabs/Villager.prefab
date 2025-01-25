@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 432588235597875002}
   - component: {fileID: 5282806565035996325}
   - component: {fileID: 6266758495388948629}
+  - component: {fileID: 3108625925014860811}
   m_Layer: 0
   m_Name: Villager
   m_TagString: Villager
@@ -149,3 +150,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   bubblePrefab: {fileID: 9061002316118646731, guid: 225536716b8c04e71a47c72120982bed, type: 3}
+--- !u!114 &3108625925014860811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5905160696576995861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e04cec45f5bdd46369952c8f99984ab3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

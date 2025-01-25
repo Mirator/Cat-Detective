@@ -343,7 +343,6 @@ Transform:
   - {fileID: 1689533716}
   - {fileID: 690037006}
   - {fileID: 440998340}
-  - {fileID: 1792846824}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &352816328
@@ -538,7 +537,7 @@ GameObject:
   - component: {fileID: 440998340}
   - component: {fileID: 440998339}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: GamePuzzleManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -553,9 +552,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 440998338}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2accb95eea31b4a0da8d76a61922feaa, type: 3}
+  m_Script: {fileID: 11500000, guid: ba747c986bd0b412a8be35227f4da270, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  puzzleUI: {fileID: 958166949}
+  buttonContainer: {fileID: 1691426576}
+  buttonPrefab: {fileID: 6957878786708388368, guid: cc225d65a38bc4b5591b35c3fc4619b4, type: 3}
+  headerText: {fileID: 1260274099}
 --- !u!4 &440998340
 Transform:
   m_ObjectHideFlags: 0
@@ -1952,54 +1955,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1792846822
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1792846824}
-  - component: {fileID: 1792846823}
-  m_Layer: 0
-  m_Name: PuzzleManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1792846823
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1792846822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8df310084954a461491532f3391b1199, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  puzzleUI: {fileID: 958166949}
-  buttonContainer: {fileID: 1691426576}
-  buttonPrefab: {fileID: 6957878786708388368, guid: cc225d65a38bc4b5591b35c3fc4619b4, type: 3}
-  headerText: {fileID: 1260274099}
---- !u!4 &1792846824
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1792846822}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0005235374, y: 0, z: 10.019993}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 145530986}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1925434634
 GameObject:

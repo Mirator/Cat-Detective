@@ -12,51 +12,49 @@ public class PathManager
     }
 
     public List<Location> GeneratePath(Location start, Location end, int numberOfVillagers)
-{
-    path.Clear();
-    HashSet<Location> visited = new HashSet<Location>();
-
-    // Ensure path length is 4
-    int pathLength = 4;
-
-    Location current = start;
-    path.Add(current);
-    visited.Add(current);
-
-    while (path.Count < pathLength - 1) // Generate intermediate locations
     {
-        List<Location> neighbors = mapManager.GetNeighbors(current);
+        path.Clear();
+        HashSet<Location> visited = new HashSet<Location>();
 
-        if (neighbors.Count == 0)
-        {
-            Debug.LogError($"No valid neighbors for {current}. Path generation failed.");
-            break;
-        }
+        // Ensure path length is 4
+        int pathLength = 4;
 
-        // Pick a random unvisited neighbor
-        List<Location> unvisitedNeighbors = neighbors.FindAll(n => !visited.Contains(n));
-        if (unvisitedNeighbors.Count == 0)
-        {
-            // If all neighbors are visited, allow revisiting
-            unvisitedNeighbors = neighbors;
-        }
-
-        current = unvisitedNeighbors[UnityEngine.Random.Range(0, unvisitedNeighbors.Count)];
+        Location current = start;
         path.Add(current);
         visited.Add(current);
+
+        while (path.Count < pathLength - 1) // Generate intermediate locations
+        {
+            List<Location> neighbors = mapManager.GetNeighbors(current);
+
+            if (neighbors.Count == 0)
+            {
+                Debug.LogError($"No valid neighbors for {current}. Path generation failed.");
+                break;
+            }
+
+            // Pick a random unvisited neighbor
+            List<Location> unvisitedNeighbors = neighbors.FindAll(n => !visited.Contains(n));
+            if (unvisitedNeighbors.Count == 0)
+            {
+                // If all neighbors are visited, allow revisiting
+                unvisitedNeighbors = neighbors;
+            }
+
+            current = unvisitedNeighbors[UnityEngine.Random.Range(0, unvisitedNeighbors.Count)];
+            path.Add(current);
+            visited.Add(current);
+        }
+
+        // Ensure the end location is always added to complete the path
+        if (path.Count < pathLength)
+        {
+            path.Add(end);
+        }
+
+        Debug.Log($"Generated path: {string.Join(" -> ", path)}");
+        return path;
     }
-
-    // Ensure the end location is always added to complete the path
-    if (path.Count < pathLength)
-    {
-        path.Add(end);
-    }
-
-    Debug.Log($"Generated path: {string.Join(" -> ", path)}");
-    return path;
-}
-
-
 
     /// <summary>
     /// Returns the currently generated path.

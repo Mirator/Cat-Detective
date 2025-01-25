@@ -11,6 +11,7 @@ public class VillagerManager : MonoBehaviour
     private FinalLocationManager finalLocationManager;
     private MapManager mapManager;
     private PathManager pathManager;
+    private List<Location> validatedPath; // Store the generated path
 
     void Start()
     {
@@ -34,7 +35,7 @@ public class VillagerManager : MonoBehaviour
 
         // Generate the path
         int numberOfVillagers = spawnPoints.Length; // Total number of villagers
-        List<Location> validatedPath = pathManager.GeneratePath(Location.Garden, finalLocation, numberOfVillagers);
+        validatedPath = pathManager.GeneratePath(Location.Garden, finalLocation, numberOfVillagers);
 
         if (validatedPath == null || validatedPath.Count == 0)
         {
@@ -58,7 +59,6 @@ public class VillagerManager : MonoBehaviour
         if (locations == null || locations.Count == 0)
         {
             locations = new List<Location>((Location[])System.Enum.GetValues(typeof(Location)));
-            //Debug.Log($"Initialized {locations.Count} locations.");
         }
     }
 
@@ -71,13 +71,16 @@ public class VillagerManager : MonoBehaviour
 
             if (villagerScript != null && i < clues.Count)
             {
-                foreach (var clue in clues)
-                {
-                    //Debug.Log($"[VillagerManager] Clue to assign: Time={clue.Time}, SeenAt={clue.SeenAt}, NextLocation={clue.NextLocation}");
-                }
                 villagerScript.AssignClue(clues[i]);
-                //Debug.Log($"Villager spawned at {spawnPoints[i].position} with clue: {clues[i].Time}, {clues[i].SeenAt}, {clues[i].NextLocation}");
             }
         }
+    }
+
+    /// <summary>
+    /// Expose the generated path for other managers to use.
+    /// </summary>
+    public List<Location> GetPath()
+    {
+        return validatedPath;
     }
 }
