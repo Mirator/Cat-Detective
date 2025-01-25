@@ -69,16 +69,18 @@ public static class ClueUtils
         List<Location> connections = mapConnections[currentLocation];
         List<Location> filteredConnections = connections.FindAll(loc => !exclusions.Contains(loc));
 
-        Debug.Log($"Valid connections for {currentLocation}: {string.Join(", ", connections)}");
-        Debug.Log($"Filtered connections for {currentLocation} after exclusions: {string.Join(", ", filteredConnections)}");
+        Debug.Log($"Connections for {currentLocation}: {string.Join(", ", connections)}");
+        Debug.Log($"Exclusions for {currentLocation}: {string.Join(", ", exclusions)}");
+        Debug.Log($"Filtered connections for {currentLocation}: {string.Join(", ", filteredConnections)}");
 
-        // If no valid connections remain, allow one excluded neighbor
+        // If no valid connections remain, allow one excluded connection
         if (filteredConnections.Count == 0)
         {
-            Debug.LogWarning($"No valid connections found for {currentLocation}. Allowing one excluded connection.");
+            Debug.LogWarning($"No valid connections found for {currentLocation}. Returning one excluded connection.");
             return connections[Random.Range(0, connections.Count)];
         }
 
         return filteredConnections[Random.Range(0, filteredConnections.Count)];
     }
+
 }

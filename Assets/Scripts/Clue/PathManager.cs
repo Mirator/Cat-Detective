@@ -11,37 +11,42 @@ public class PathManager
         this.mapManager = mapManager;
     }
 
-    /// <summary>
-    /// Generates a path from the start location to the end location.
-    /// Allows revisiting a path if necessary.
-    /// </summary>
-    public List<Location> GeneratePath(Location start, Location end, bool allowRevisit = false)
+    public List<Location> GeneratePath(Location start, Location end, int numberOfVillagers)
     {
         path.Clear();
-        Location current = start;
-        HashSet<Location> visited = allowRevisit ? null : new HashSet<Location>();
 
-        while (current != end)
+        Location current = start;
+        HashSet<Location> visited = new HashSet<Location>();
+
+        while (current != end && path.Count < Mathf.Max(3, numberOfVillagers / 2))
         {
             path.Add(current);
-            if (!allowRevisit) visited.Add(current);
+            visited.Add(current);
 
             List<Location> neighbors = mapManager.GetNeighbors(current);
-            Location next = GetNextLocation(neighbors, visited);
-
-            if (next == default)
+            if (neighbors.Count == 0)
             {
-                Debug.LogError($"Failed to find a valid path from {start} to {end}. Exiting loop.");
+                Debug.LogError($"No valid neighbors for {current}. Path generation failed.");
                 break;
             }
+
+            Location next = neighbors.Find(n => !visited.Contains(n) || n == end);
 
             current = next;
         }
 
-        path.Add(end);
+        if (!path.Contains(end))
+        {
+            Debug.LogWarning($"Path does not include final location {end}. Forcing inclusion.");
+            path.Add(end);
+        }
+
         Debug.Log($"Generated path: {string.Join(" -> ", path)}");
         return path;
     }
+
+
+
 
     /// <summary>
     /// Returns the currently generated path.

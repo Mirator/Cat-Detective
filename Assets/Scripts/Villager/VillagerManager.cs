@@ -33,7 +33,9 @@ public class VillagerManager : MonoBehaviour
         pathManager = new PathManager(mapManager);
 
         // Generate the path and clues
-        List<Location> validatedPath = pathManager.GeneratePath(Location.Garden, finalLocation);
+        int numberOfVillagers = spawnPoints.Length; // Total number of villagers
+        List<Location> validatedPath = pathManager.GeneratePath(Location.Garden, finalLocation, numberOfVillagers);
+
         if (validatedPath == null || validatedPath.Count == 0)
         {
             Debug.LogError("Failed to generate a valid path.");
@@ -41,7 +43,11 @@ public class VillagerManager : MonoBehaviour
         }
 
         ClueFactory clueFactory = new ClueFactory(mapManager.GetConnections(), times, validatedPath);
-        List<Clue> clues = clueFactory.GenerateClues(correctClueCount: 3, incorrectClueCount: 1, randomClueCount: 2);
+        List<Clue> clues = clueFactory.GenerateClues(
+            correctClueCount: Mathf.Max(3, validatedPath.Count - 1), // Ensure sufficient correct clues
+            incorrectClueCount: Mathf.Clamp(numberOfVillagers / 2 - 1, 1, numberOfVillagers - 1),
+            randomClueCount: Mathf.Clamp(numberOfVillagers / 4, 0, numberOfVillagers - 1)
+        );
 
         GenerateAndAssignClues(clues);
     }
