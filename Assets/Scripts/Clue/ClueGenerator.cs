@@ -94,21 +94,20 @@ public class ClueGenerator
         return correctClues;
     }
 
-
     private List<Clue> GenerateIncorrectClues(int count)
     {
         List<Clue> incorrectClues = new List<Clue>();
+        List<Location> correctPath = new List<Location>(map.GetPathTo(finalLocation)); // Get correct path
 
         for (int i = 0; i < count; i++)
         {
-            Location seenAt = GetRandomLocation();
-            Location nextLocation = GetRandomConnectedLocation(seenAt);
+            // Select a location not part of the correct path
+            Location seenAt = GetRandomLocationExcluding(correctPath);
 
-            if (nextLocation == finalLocation)
-            {
-                nextLocation = GetRandomConnectedLocation(nextLocation);
-            }
+            // Select a connected location that also avoids the final location
+            Location nextLocation = GetRandomConnectedLocationExcluding(seenAt, correctPath);
 
+            // Assign a random time
             string time = times[Random.Range(0, times.Length)];
 
             incorrectClues.Add(new Clue
@@ -122,6 +121,23 @@ public class ClueGenerator
         return incorrectClues;
     }
 
+    private Location GetRandomLocationExcluding(List<Location> exclusions)
+    {
+        List<Location> allLocations = map.GetAllNodes();
+        List<Location> filteredLocations = allLocations.FindAll(loc => !exclusions.Contains(loc));
+
+        if (filteredLocations.Count == 0) return allLocations[0]; // Fallback
+        return filteredLocations[Random.Range(0, filteredLocations.Count)];
+    }
+
+    private Location GetRandomConnectedLocationExcluding(Location currentLocation, List<Location> exclusions)
+    {
+        List<Location> connections = map.GetConnections(currentLocation);
+        List<Location> filteredConnections = connections.FindAll(loc => !exclusions.Contains(loc));
+
+        if (filteredConnections.Count == 0) return connections[0]; // Fallback
+        return filteredConnections[Random.Range(0, filteredConnections.Count)];
+    }
     private List<Clue> GenerateRandomClues(int count)
     {
         List<Clue> randomClues = new List<Clue>();
