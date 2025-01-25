@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ClueGenerator
 {
@@ -38,7 +39,7 @@ public class ClueGenerator
     private List<Clue> GenerateCorrectClues(int count)
     {
         List<Clue> correctClues = new List<Clue>();
-        int timeIndex = 0; // Start from Morning
+        int timeIndex = UnityEngine.Random.Range(0, Enum.GetValues(typeof(TimeOfDay)).Length);
 
         for (int i = 0; i < count && i < correctPath.Count - 1; i++)
         {
@@ -50,60 +51,55 @@ public class ClueGenerator
                 Time = time
             });
 
-            Debug.Log($"[GenerateCorrectClues] Generating clue for index {i}. Time: {time}");
-            Debug.Log($"[GenerateCorrectClues] Updated timeIndex to: {timeIndex}");
-
-            // Increment the timeIndex and wrap around if necessary
-            timeIndex = (timeIndex + 1) % times.Length;
+            timeIndex = (timeIndex + 1) % Enum.GetValues(typeof(TimeOfDay)).Length;
         }
 
         return correctClues;
     }
- private List<Clue> GenerateIncorrectClues(int count)
-{
-    List<Clue> incorrectClues = new List<Clue>();
 
-    for (int i = 0; i < count; i++)
+    private List<Clue> GenerateIncorrectClues(int count)
     {
-        // Get a random location that is not part of the correct path
-        Location seenAt = GetRandomLocationExcluding(correctPath);
+        List<Clue> incorrectClues = new List<Clue>();
+        int timeIndex = UnityEngine.Random.Range(0, times.Length);
 
-        // Get a connected location for the 'NextLocation'
-        List<Location> neighbors = mapManager.GetNeighbors(seenAt);
-        
-        if (neighbors == null || neighbors.Count == 0)
+        for (int i = 0; i < count; i++)
         {
-            // If no neighbors exist, fallback to another random location
-            Location fallbackLocation;
-            do
+            Location seenAt = GetRandomLocationExcluding(correctPath);
+            List<Location> neighbors = mapManager.GetNeighbors(seenAt);
+
+            if (neighbors == null || neighbors.Count == 0)
             {
-                fallbackLocation = GetRandomLocationExcluding(correctPath);
-            } while (fallbackLocation == seenAt);
+                Location fallbackLocation;
+                do
+                {
+                    fallbackLocation = GetRandomLocationExcluding(correctPath);
+                } while (fallbackLocation == seenAt);
 
-            neighbors = new List<Location> { fallbackLocation };
-        }
+                neighbors = new List<Location> { fallbackLocation };
+            }
 
-        Location nextLocation = neighbors[Random.Range(0, neighbors.Count)];
+            Location nextLocation = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
 
-        // Ensure SeenAt and NextLocation are not identical
-        if (seenAt != nextLocation)
-        {
-            incorrectClues.Add(new Clue
+            if (seenAt != nextLocation)
             {
-                SeenAt = seenAt,
-                NextLocation = nextLocation,
-                Time = times[Random.Range(0, times.Length)]
-            });
+                incorrectClues.Add(new Clue
+                {
+                    SeenAt = seenAt,
+                    NextLocation = nextLocation,
+                    Time = times[timeIndex]
+                });
+
+                timeIndex = (timeIndex + 1) % times.Length;
+            }
+            else
+            {
+                i--;
+            }
         }
-        else
-        {
-            // Skip this iteration to avoid adding invalid clues
-            i--;
-        }
+
+        return incorrectClues;
     }
 
-    return incorrectClues;
-}
     private List<Clue> GenerateRandomClues(int count)
     {
         List<Clue> randomClues = new List<Clue>();
@@ -113,7 +109,6 @@ public class ClueGenerator
             Location seenAt = GetRandomLocation();
             Location nextLocation;
 
-            // Ensure the start and end are not the same
             do
             {
                 nextLocation = GetRandomLocation();
@@ -123,7 +118,7 @@ public class ClueGenerator
             {
                 SeenAt = seenAt,
                 NextLocation = nextLocation,
-                Time = times[Random.Range(0, times.Length)]
+                Time = times[UnityEngine.Random.Range(0, times.Length)]
             });
         }
 
@@ -133,14 +128,14 @@ public class ClueGenerator
     private Location GetRandomLocation()
     {
         var locations = new List<Location>(mapConnections.Keys);
-        return locations[Random.Range(0, locations.Count)];
+        return locations[UnityEngine.Random.Range(0, locations.Count)];
     }
 
     private Location GetRandomLocationExcluding(List<Location> exclusions)
     {
         var locations = new List<Location>(mapConnections.Keys);
         var filtered = locations.FindAll(loc => !exclusions.Contains(loc));
-        return filtered[Random.Range(0, filtered.Count)];
+        return filtered[UnityEngine.Random.Range(0, filtered.Count)];
     }
 
     private Location GetRandomConnectedLocation(Location current)
@@ -148,8 +143,8 @@ public class ClueGenerator
         if (mapConnections.ContainsKey(current))
         {
             var neighbors = mapConnections[current];
-            return neighbors[Random.Range(0, neighbors.Count)];
+            return neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
         }
-        return current; // Fallback to the same location if no connections are found
+        return current;
     }
 }

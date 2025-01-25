@@ -58,7 +58,7 @@ public class VillagerManager : MonoBehaviour
         if (locations == null || locations.Count == 0)
         {
             locations = new List<Location>((Location[])System.Enum.GetValues(typeof(Location)));
-            Debug.Log($"Initialized {locations.Count} locations.");
+            //Debug.Log($"Initialized {locations.Count} locations.");
         }
     }
 
@@ -73,10 +73,10 @@ public class VillagerManager : MonoBehaviour
             {
                 foreach (var clue in clues)
                 {
-                    Debug.Log($"[VillagerManager] Clue to assign: Time={clue.Time}, SeenAt={clue.SeenAt}, NextLocation={clue.NextLocation}");
+                    //Debug.Log($"[VillagerManager] Clue to assign: Time={clue.Time}, SeenAt={clue.SeenAt}, NextLocation={clue.NextLocation}");
                 }
                 villagerScript.AssignClue(clues[i]);
-                Debug.Log($"Villager spawned at {spawnPoints[i].position} with clue: {clues[i].Time}, {clues[i].SeenAt}, {clues[i].NextLocation}");
+                //Debug.Log($"Villager spawned at {spawnPoints[i].position} with clue: {clues[i].Time}, {clues[i].SeenAt}, {clues[i].NextLocation}");
             }
         }
     }

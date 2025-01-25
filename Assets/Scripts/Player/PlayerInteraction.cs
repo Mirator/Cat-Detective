@@ -65,15 +65,15 @@ public class PlayerInteraction : MonoBehaviour
 
             if (bubbleScript != null && villager.assignedClue != null)
             {
-                Debug.Log($"Clue from villager: Time: {villager.assignedClue.Time}, Seen At: {villager.assignedClue.SeenAt}, Next Location: {villager.assignedClue.NextLocation}");
+                //Debug.Log($"Clue from villager: Time: {villager.assignedClue.Time}, Seen At: {villager.assignedClue.SeenAt}, Next Location: {villager.assignedClue.NextLocation}");
 
                 Sprite timeIcon = ClueIconManager.GetIconForTime(villager.assignedClue.Time);
                 Sprite seenAtIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.SeenAt);
                 Sprite nextLocationIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.NextLocation);
 
-                Debug.Log($"Time Icon: {(timeIcon != null ? timeIcon.name : "None")}");
-                Debug.Log($"SeenAt Icon: {(seenAtIcon != null ? seenAtIcon.name : "None")}");
-                Debug.Log($"NextLocation Icon: {(nextLocationIcon != null ? nextLocationIcon.name : "None")}");
+                //Debug.Log($"Time Icon: {(timeIcon != null ? timeIcon.name : "None")}");
+                //Debug.Log($"SeenAt Icon: {(seenAtIcon != null ? seenAtIcon.name : "None")}");
+                //Debug.Log($"NextLocation Icon: {(nextLocationIcon != null ? nextLocationIcon.name : "None")}");
 
                 bubbleScript.SetIcons(timeIcon, seenAtIcon, nextLocationIcon);
                 bubbleScript.SetPosition(villager.transform.position);

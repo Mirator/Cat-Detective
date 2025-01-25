@@ -14,36 +14,48 @@ public class PathManager
     public List<Location> GeneratePath(Location start, Location end, int numberOfVillagers)
     {
         path.Clear();
-
-        Location current = start;
         HashSet<Location> visited = new HashSet<Location>();
 
-        while (current != end && path.Count < Mathf.Max(3, numberOfVillagers / 2))
-        {
-            path.Add(current);
-            visited.Add(current);
+        // Ensure path length is 3 or 4
+        int pathLength = 4
 
+        Location current = start;
+        path.Add(current);
+        visited.Add(current);
+
+        for (int i = 1; i < pathLength - 1; i++)
+        {
             List<Location> neighbors = mapManager.GetNeighbors(current);
+
             if (neighbors.Count == 0)
             {
                 Debug.LogError($"No valid neighbors for {current}. Path generation failed.");
                 break;
             }
 
-            Location next = neighbors.Find(n => !visited.Contains(n) || n == end);
+            // Pick a random unvisited neighbor
+            List<Location> unvisitedNeighbors = neighbors.FindAll(n => !visited.Contains(n));
+            if (unvisitedNeighbors.Count == 0)
+            {
+                // If all neighbors are visited, allow revisiting
+                unvisitedNeighbors = neighbors;
+            }
 
-            current = next;
+            current = unvisitedNeighbors[Random.Range(0, unvisitedNeighbors.Count)];
+            path.Add(current);
+            visited.Add(current);
         }
 
+        // Ensure the end location is added
         if (!path.Contains(end))
         {
-            Debug.LogWarning($"Path does not include final location {end}. Forcing inclusion.");
             path.Add(end);
         }
 
         Debug.Log($"Generated path: {string.Join(" -> ", path)}");
         return path;
     }
+
 
 
 
