@@ -39,24 +39,18 @@ public class PlayerInteraction : MonoBehaviour
             }
             else if (hit.CompareTag("MasterVillager"))
             {
-                VillagerManager villagerManager = Object.FindFirstObjectByType<VillagerManager>();
                 GamePuzzleManager gamePuzzleManager = Object.FindFirstObjectByType<GamePuzzleManager>();
 
-                if (villagerManager == null || gamePuzzleManager == null)
+                if (gamePuzzleManager == null)
                 {
-                    Debug.LogError("VillagerManager or GamePuzzleManager not found in the scene!");
+                    Debug.LogError("GamePuzzleManager not found in the scene!");
                     return;
                 }
 
-                // Initialize GamePuzzleManager with the path from VillagerManager
-                if (gamePuzzleManager.GeneratedPath == null)
-                {
-                    gamePuzzleManager.Initialize(villagerManager.GetPath());
-                }
-
+                // Initialize GamePuzzleManager if not already done
+                gamePuzzleManager.Initialize();
                 gamePuzzleManager.InteractWithMasterVillager();
             }
-
         }
     }
 
@@ -77,15 +71,9 @@ public class PlayerInteraction : MonoBehaviour
 
             if (bubbleScript != null && villager.assignedClue != null)
             {
-                //Debug.Log($"Clue from villager: Time: {villager.assignedClue.Time}, Seen At: {villager.assignedClue.SeenAt}, Next Location: {villager.assignedClue.NextLocation}");
-
                 Sprite timeIcon = ClueIconManager.GetIconForTime(villager.assignedClue.Time);
                 Sprite seenAtIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.SeenAt);
                 Sprite nextLocationIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.NextLocation);
-
-                //Debug.Log($"Time Icon: {(timeIcon != null ? timeIcon.name : "None")}");
-                //Debug.Log($"SeenAt Icon: {(seenAtIcon != null ? seenAtIcon.name : "None")}");
-                //Debug.Log($"NextLocation Icon: {(nextLocationIcon != null ? nextLocationIcon.name : "None")}");
 
                 bubbleScript.SetIcons(timeIcon, seenAtIcon, nextLocationIcon);
                 bubbleScript.SetPosition(villager.transform.position);

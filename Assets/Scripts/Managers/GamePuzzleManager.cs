@@ -11,28 +11,30 @@ public class GamePuzzleManager : MonoBehaviour
     public GameObject buttonPrefab; // Prefab for a UI button
     public TextMeshProUGUI headerText; // Header text for the UI
 
-    private List<Location> generatedPath; // Stores the generated path
-    private int currentPathIndex = 0; // Tracks player progress along the path
+    private Location correctFinalLocation; // Correct final location from FinalLocationManager
 
     /// <summary>
-    /// Public property to expose the generated path for debugging or interaction.
+    /// Initializes the GamePuzzleManager and fetches the final location.
     /// </summary>
-    public List<Location> GeneratedPath => generatedPath;
-
-    /// <summary>
-    /// Initializes the GamePuzzleManager with a path.
-    /// </summary>
-    /// <param name="path">The path to use for the puzzle.</param>
-    public void Initialize(List<Location> path)
+    public void Initialize()
     {
-        if (path == null || path.Count == 0)
+        // Fetch the final location from FinalLocationManager
+        FinalLocationManager finalLocationManager = Object.FindFirstObjectByType<FinalLocationManager>();
+        if (finalLocationManager == null)
         {
-            Debug.LogError("Failed to initialize GamePuzzleManager: path is null or empty!");
+            Debug.LogError("FinalLocationManager not found in the scene!");
             return;
         }
 
-        generatedPath = path;
-        Debug.Log($"GamePuzzleManager initialized with path: {string.Join(" -> ", generatedPath)}");
+        correctFinalLocation = finalLocationManager.GetFinalLocation();
+
+        if (correctFinalLocation == default)
+        {
+            Debug.LogError("Correct final location is not set!");
+            return;
+        }
+
+        Debug.Log($"GamePuzzleManager initialized. Correct final location: {correctFinalLocation}");
 
         // Generate location buttons and hide the UI initially
         GenerateLocationButtons();
@@ -89,25 +91,13 @@ public class GamePuzzleManager : MonoBehaviour
     /// </summary>
     public void SelectLocation(Location selectedLocation)
     {
-        if (generatedPath == null || generatedPath.Count == 0)
+        if (selectedLocation == correctFinalLocation)
         {
-            Debug.LogError("GamePuzzleManager is not initialized!");
-            return;
-        }
-
-        if (selectedLocation == generatedPath[currentPathIndex])
-        {
-            Debug.Log($"Correct location selected: {selectedLocation}");
-            currentPathIndex++;
-
-            if (currentPathIndex >= generatedPath.Count)
-            {
-                Debug.Log("You Win!"); // Win message
-            }
+            Debug.Log("You Win! Correct final location reached.");
         }
         else
         {
-            Debug.Log($"Incorrect location selected: {selectedLocation}. The correct location was: {generatedPath[currentPathIndex]}");
+            Debug.Log($"Incorrect location selected: {selectedLocation}. The correct location was: {correctFinalLocation}");
             Debug.Log("Game Over!"); // Lose message
         }
     }
@@ -117,7 +107,7 @@ public class GamePuzzleManager : MonoBehaviour
     /// </summary>
     public void InteractWithMasterVillager()
     {
-        if (generatedPath == null || generatedPath.Count == 0)
+        if (correctFinalLocation == default)
         {
             Debug.LogError("GamePuzzleManager is not initialized!");
             return;
