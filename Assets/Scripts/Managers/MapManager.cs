@@ -1,27 +1,68 @@
-using UnityEngine;
+using System.Collections.Generic;
 
-public class MapManager : MonoBehaviour
+public class MapManager
 {
-    public static Graph<Location> CreateMap()
+    private Dictionary<Location, List<Location>> connections = new Dictionary<Location, List<Location>>();
+
+    public MapManager()
     {
-        Graph<Location> map = new Graph<Location>();
+        InitializeConnections();
+    }
 
-        // Add bidirectional edges manually
-        map.AddEdge(Location.Garden, Location.Bakery); // Garden -> Bakery
-        map.AddEdge(Location.Bakery, Location.Garden); // Bakery -> Garden
+    /// <summary>
+    /// Initializes the map connections.
+    /// </summary>
+    private void InitializeConnections()
+    {
+        AddConnection(Location.Garden, Location.Bakery);
+        AddConnection(Location.Bakery, Location.Treehouse);
+        AddConnection(Location.Bakery, Location.Market);
+        AddConnection(Location.Treehouse, Location.Market);
+        AddConnection(Location.Market, Location.Barn);
+        AddConnection(Location.Market, Location.Riverbank);
+        AddConnection(Location.Barn, Location.Riverbank);
+    }
 
-        map.AddEdge(Location.Bakery, Location.Treehouse); // Bakery -> Treehouse
-        map.AddEdge(Location.Treehouse, Location.Bakery); // Treehouse -> Bakery
+    /// <summary>
+    /// Adds a bidirectional connection between two locations.
+    /// </summary>
+    private void AddConnection(Location from, Location to)
+    {
+        if (!connections.ContainsKey(from))
+        {
+            connections[from] = new List<Location>();
+        }
 
-        map.AddEdge(Location.Treehouse, Location.Market); // Treehouse -> Market
-        map.AddEdge(Location.Market, Location.Treehouse); // Market -> Treehouse
+        if (!connections.ContainsKey(to))
+        {
+            connections[to] = new List<Location>();
+        }
 
-        map.AddEdge(Location.Market, Location.Barn); // Market -> Barn
-        map.AddEdge(Location.Barn, Location.Market); // Barn -> Market
+        connections[from].Add(to);
+        connections[to].Add(from); // Bidirectional
+    }
 
-        map.AddEdge(Location.Barn, Location.Riverbank); // Barn -> Riverbank
-        map.AddEdge(Location.Riverbank, Location.Barn); // Riverbank -> Barn
+    /// <summary>
+    /// Gets the connections map.
+    /// </summary>
+    public Dictionary<Location, List<Location>> GetConnections()
+    {
+        return connections;
+    }
 
-        return map;
+    /// <summary>
+    /// Gets neighbors for a specific location.
+    /// </summary>
+    public List<Location> GetNeighbors(Location location)
+    {
+        return connections.ContainsKey(location) ? connections[location] : new List<Location>();
+    }
+
+    /// <summary>
+    /// Gets all locations in the map.
+    /// </summary>
+    public List<Location> GetAllLocations()
+    {
+        return new List<Location>(connections.Keys);
     }
 }

@@ -3,51 +3,79 @@ using UnityEngine;
 
 public class ClueGenerator
 {
-    private Graph<Location> map;
+    private MapManager mapManager;
+    private List<Location> correctPath;
     private string[] times;
-    private int numberOfVillagers;
-    private Location finalLocation;
 
-    private PathManager pathManager;
-    private ClueFactory clueFactory;
-
-    public ClueGenerator(Graph<Location> map, string[] times, int numberOfVillagers, Location finalLocation)
+    public ClueGenerator(MapManager mapManager, List<Location> correctPath, string[] times)
     {
-        this.map = map;
+        this.mapManager = mapManager;
+        this.correctPath = correctPath;
         this.times = times;
-        this.numberOfVillagers = numberOfVillagers;
-        this.finalLocation = finalLocation;
-
-        pathManager = new PathManager(map, finalLocation);
-        clueFactory = new ClueFactory(map, times, pathManager);
     }
 
-    /// <summary>
-    /// Generates all clues (correct, incorrect, random).
-    /// </summary>
-    public List<Clue> GenerateClues()
+    public List<Clue> GenerateClues(int correctClueCount, int incorrectClueCount, int randomClueCount)
     {
         List<Clue> clues = new List<Clue>();
 
-        int correctClueCount = Mathf.Clamp((int)(numberOfVillagers * Random.Range(0.51f, 0.75f)), 1, numberOfVillagers);
-        int incorrectClueCount = Mathf.Clamp((int)(numberOfVillagers * Random.Range(0.1f, 0.25f)), 0, numberOfVillagers - correctClueCount);
-        int randomClueCount = numberOfVillagers - correctClueCount - incorrectClueCount;
-
-        // Ensure at least one incorrect clue
-        if (incorrectClueCount == 0)
+        // Generate correct clues
+        for (int i = 0; i < correctClueCount && i < correctPath.Count - 1; i++)
         {
-            incorrectClueCount = 1;
-            if (randomClueCount > 0) randomClueCount--;
-            else if (correctClueCount > 1) correctClueCount--;
+            clues.Add(new Clue
+            {
+                SeenAt = correctPath[i],
+                NextLocation = correctPath[i + 1],
+                Time = times[Random.Range(0, times.Length)]
+            });
         }
 
-        Debug.Log($"Clues: {correctClueCount} correct, {incorrectClueCount} incorrect, {randomClueCount} random");
+        // Generate incorrect clues
+        for (int i = 0; i < incorrectClueCount; i++)
+        {
+            Location seenAt = GetRandomLocationExcluding(correctPath);
+            Location nextLocation = GetRandomConnectedLocation(seenAt);
 
-        // Generate clues
-        clues.AddRange(clueFactory.GenerateCorrectClues(correctClueCount));
-        clues.AddRange(clueFactory.GenerateIncorrectClues(incorrectClueCount));
-        clues.AddRange(clueFactory.GenerateRandomClues(randomClueCount));
+            clues.Add(new Clue
+            {
+                SeenAt = seenAt,
+                NextLocation = nextLocation,
+                Time = times[Random.Range(0, times.Length)]
+            });
+        }
+
+        // Generate random clues
+        for (int i = 0; i < randomClueCount; i++)
+        {
+            Location seenAt = GetRandomLocation();
+            Location nextLocation = GetRandomLocation();
+
+            clues.Add(new Clue
+            {
+                SeenAt = seenAt,
+                NextLocation = nextLocation,
+                Time = times[Random.Range(0, times.Length)]
+            });
+        }
 
         return clues;
+    }
+
+    private Location GetRandomLocation()
+    {
+        var locations = mapManager.GetAllLocations();
+        return locations[Random.Range(0, locations.Count)];
+    }
+
+    private Location GetRandomLocationExcluding(List<Location> exclusions)
+    {
+        var locations = mapManager.GetAllLocations();
+        var filtered = locations.FindAll(loc => !exclusions.Contains(loc));
+        return filtered[Random.Range(0, filtered.Count)];
+    }
+
+    private Location GetRandomConnectedLocation(Location current)
+    {
+        var neighbors = mapManager.GetNeighbors(current);
+        return neighbors[Random.Range(0, neighbors.Count)];
     }
 }

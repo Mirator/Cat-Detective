@@ -3,30 +3,41 @@ using UnityEngine;
 
 public class PathManager
 {
-    private Graph<Location> map;
-    private Location finalLocation;
+    private MapManager mapManager;
+    private List<Location> path = new List<Location>();
 
-    public PathManager(Graph<Location> map, Location finalLocation)
+    public PathManager(MapManager mapManager)
     {
-        this.map = map;
-        this.finalLocation = finalLocation;
+        this.mapManager = mapManager;
     }
 
-    /// <summary>
-    /// Validates and truncates a path to the final location.
-    /// </summary>
-    public List<Location> GetValidatedPath()
+    public List<Location> GeneratePath(Location start, Location end)
     {
-        List<Location> path = new List<Location>(map.GetPathTo(finalLocation));
+        path.Clear();
+        Location current = start;
 
-        if (path == null || !path.Contains(finalLocation))
+        while (current != end)
         {
-            Debug.LogWarning("No valid path found to the final location.");
-            return null;
+            path.Add(current);
+            List<Location> neighbors = mapManager.GetNeighbors(current);
+
+            // Pick the next location leading closer to the end
+            foreach (var neighbor in neighbors)
+            {
+                if (!path.Contains(neighbor))
+                {
+                    current = neighbor;
+                    break;
+                }
+            }
         }
 
-        // Truncate the path to stop at the final location
-        int finalIndex = path.IndexOf(finalLocation);
-        return path.GetRange(0, finalIndex + 1);
+        path.Add(end);
+        return path;
+    }
+
+    public List<Location> GetPath()
+    {
+        return path;
     }
 }

@@ -3,52 +3,56 @@ using UnityEngine;
 
 public class ClueFactory
 {
-    private Graph<Location> map;
+    private Dictionary<Location, List<Location>> mapConnections;
     private string[] times;
-    private PathManager pathManager;
+    private List<Location> validatedPath;
 
-    public ClueFactory(Graph<Location> map, string[] times, PathManager pathManager)
+    public ClueFactory(Dictionary<Location, List<Location>> mapConnections, string[] times, List<Location> validatedPath)
     {
-        this.map = map;
+        this.mapConnections = mapConnections;
         this.times = times;
-        this.pathManager = pathManager;
+        this.validatedPath = validatedPath;
     }
 
-    public List<Clue> GenerateCorrectClues(int count)
+    /// <summary>
+    /// Generates all clues (correct, incorrect, and random).
+    /// </summary>
+    public List<Clue> GenerateClues(int correctClueCount, int incorrectClueCount, int randomClueCount)
+    {
+        List<Clue> clues = new List<Clue>();
+
+        clues.AddRange(GenerateCorrectClues(correctClueCount));
+        clues.AddRange(GenerateIncorrectClues(incorrectClueCount));
+        clues.AddRange(GenerateRandomClues(randomClueCount));
+
+        return clues;
+    }
+
+    private List<Clue> GenerateCorrectClues(int count)
     {
         List<Clue> correctClues = new List<Clue>();
-        List<Location> path = pathManager.GetValidatedPath();
 
-        if (path == null || path.Count < 2)
-        {
-            Debug.LogWarning("No valid path generated for correct clues.");
-            return correctClues;
-        }
-
-        Debug.Log($"Generating correct clues for path: {string.Join(" -> ", path)}");
-
-        for (int i = 0; i < Mathf.Min(count, path.Count - 1); i++)
+        for (int i = 0; i < Mathf.Min(count, validatedPath.Count - 1); i++)
         {
             correctClues.Add(new Clue
             {
                 Time = times[Mathf.Clamp(i, 0, times.Length - 1)],
-                SeenAt = path[i],
-                NextLocation = path[i + 1]
+                SeenAt = validatedPath[i],
+                NextLocation = validatedPath[i + 1]
             });
         }
 
         return correctClues;
     }
 
-    public List<Clue> GenerateIncorrectClues(int count)
+    private List<Clue> GenerateIncorrectClues(int count)
     {
         List<Clue> incorrectClues = new List<Clue>();
-        List<Location> correctPath = pathManager.GetValidatedPath();
 
         for (int i = 0; i < count; i++)
         {
-            Location seenAt = ClueUtils.GetRandomLocationExcluding(map, correctPath);
-            Location nextLocation = ClueUtils.GetRandomConnectedLocationExcluding(map, seenAt, correctPath);
+            Location seenAt = ClueUtils.GetRandomLocationExcluding(validatedPath, mapConnections);
+            Location nextLocation = ClueUtils.GetRandomConnectedLocationExcluding(seenAt, mapConnections, validatedPath);
 
             incorrectClues.Add(new Clue
             {
@@ -61,7 +65,7 @@ public class ClueFactory
         return incorrectClues;
     }
 
-    public List<Clue> GenerateRandomClues(int count)
+    private List<Clue> GenerateRandomClues(int count)
     {
         List<Clue> randomClues = new List<Clue>();
 
@@ -70,8 +74,8 @@ public class ClueFactory
             randomClues.Add(new Clue
             {
                 Time = times[Random.Range(0, times.Length)],
-                SeenAt = ClueUtils.GetRandomLocation(map),
-                NextLocation = ClueUtils.GetRandomLocation(map)
+                SeenAt = ClueUtils.GetRandomLocation(mapConnections),
+                NextLocation = ClueUtils.GetRandomLocation(mapConnections)
             });
         }
 

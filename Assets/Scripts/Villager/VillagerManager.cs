@@ -6,18 +6,17 @@ public class VillagerManager : MonoBehaviour
     public GameObject villagerPrefab; // Prefab for villagers
     public Transform[] spawnPoints; // Spawn points for villagers
     public string[] times = { "Morning", "Late Morning", "Noon", "Afternoon", "Evening" }; // Available times
-    public List<Location> locations; // List of all locations in the game
+    public List<Location> locations; // List of locations in the game
 
     private FinalLocationManager finalLocationManager;
-    private Graph<Location> map;
+    private MapManager mapManager;
+    private PathManager pathManager;
 
     void Start()
     {
         InitializeLocations();
 
-        // Create the map
-        map = MapManager.CreateMap();
-
+        // Find FinalLocationManager
         finalLocationManager = FindFirstObjectByType<FinalLocationManager>();
         if (finalLocationManager == null)
         {
@@ -25,15 +24,28 @@ public class VillagerManager : MonoBehaviour
             return;
         }
 
+        // Set the final location
         finalLocationManager.SetFinalLocation(locations);
         Location finalLocation = finalLocationManager.GetFinalLocation();
 
-        GenerateAndAssignClues(finalLocation);
+        // Initialize MapManager and PathManager
+        mapManager = new MapManager();
+        pathManager = new PathManager(mapManager);
+
+        // Generate the path and clues
+        List<Location> validatedPath = pathManager.GeneratePath(Location.Garden, finalLocation);
+        if (validatedPath == null || validatedPath.Count == 0)
+        {
+            Debug.LogError("Failed to generate a valid path.");
+            return;
+        }
+
+        ClueFactory clueFactory = new ClueFactory(mapManager.GetConnections(), times, validatedPath);
+        List<Clue> clues = clueFactory.GenerateClues(correctClueCount: 3, incorrectClueCount: 1, randomClueCount: 2);
+
+        GenerateAndAssignClues(clues);
     }
 
-    /// <summary>
-    /// Initializes the list of locations.
-    /// </summary>
     private void InitializeLocations()
     {
         if (locations == null || locations.Count == 0)
@@ -43,26 +55,8 @@ public class VillagerManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Generates and assigns clues to villagers.
-    /// </summary>
-    private void GenerateAndAssignClues(Location finalLocation)
+    private void GenerateAndAssignClues(List<Clue> clues)
     {
-        if (villagerPrefab == null)
-        {
-            Debug.LogError("VillagerManager: villagerPrefab is not assigned.");
-            return;
-        }
-
-        if (spawnPoints == null || spawnPoints.Length == 0)
-        {
-            Debug.LogError("VillagerManager: No spawn points assigned.");
-            return;
-        }
-
-        ClueGenerator clueGenerator = new ClueGenerator(map, times, spawnPoints.Length, finalLocation);
-        List<Clue> clues = clueGenerator.GenerateClues();
-
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             GameObject villager = Instantiate(villagerPrefab, spawnPoints[i].position, Quaternion.identity);
