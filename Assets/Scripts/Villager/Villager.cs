@@ -3,13 +3,15 @@ using UnityEngine;
 public class Villager : MonoBehaviour
 {
     [Header("Clue Settings")]
-    public string clueText; // The clue assigned to this villager
-    public GameObject bubblePrefab; // Prefab for this villager's bubble
+    public Clue assignedClue; // Clue assigned to this villager
 
     [Header("Highlight Settings")]
     public Color highlightColor = Color.yellow; // Highlight color
-    private Color originalColor; // Original color of the sprite
+    private Color originalColor; // Original color of the villager
     private SpriteRenderer spriteRenderer;
+
+    [Header("UI Settings")]
+    public GameObject bubblePrefab; // Bubble prefab for clue display
 
     void Start()
     {
@@ -20,16 +22,30 @@ public class Villager : MonoBehaviour
         }
     }
 
-    public void AssignClue(string clue)
+    /// <summary>
+    /// Assigns a clue to the villager.
+    /// </summary>
+    public void AssignClue(Clue clue)
     {
-        clueText = clue;
+        assignedClue = clue;
     }
 
-    public string GetClue()
+    /// <summary>
+    /// Returns the details of the assigned clue.
+    /// </summary>
+    public string GetClueDetails()
     {
-        return clueText;
+        if (assignedClue == null)
+        {
+            return "No clue assigned to this villager.";
+        }
+
+        return $"Time: {assignedClue.Time}, Seen At: {assignedClue.SeenAt}, Next Location: {assignedClue.NextLocation}";
     }
 
+    /// <summary>
+    /// Highlights the villager when the player is nearby.
+    /// </summary>
     public void Highlight()
     {
         if (spriteRenderer != null)
@@ -38,6 +54,9 @@ public class Villager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reverts the villager's color to its original state.
+    /// </summary>
     public void RevertHighlight()
     {
         if (spriteRenderer != null)
@@ -46,8 +65,18 @@ public class Villager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles interaction with the villager.
+    /// </summary>
     public void Interact()
     {
-        Debug.Log("Interacting with villager. Clue: " + clueText);
+        if (assignedClue != null)
+        {
+            Debug.Log($"Clue from villager: {GetClueDetails()}");
+        }
+        else
+        {
+            Debug.Log("This villager has no clue to provide.");
+        }
     }
 }

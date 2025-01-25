@@ -14,6 +14,9 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles interactions with nearby objects.
+    /// </summary>
     void InteractWithNearbyObjects()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
@@ -24,7 +27,7 @@ public class PlayerInteraction : MonoBehaviour
                 Villager villager = hit.GetComponent<Villager>();
                 if (villager != null)
                 {
-                    villager.Interact(); // Handle villager interaction
+                    villager.Interact();
                     ShowBubble(villager);
                 }
             }
@@ -33,12 +36,15 @@ public class PlayerInteraction : MonoBehaviour
                 PuzzleManager puzzleManager = FindFirstObjectByType<PuzzleManager>();
                 if (puzzleManager != null)
                 {
-                    puzzleManager.InteractWithMasterVillager(); // Start location selection
+                    puzzleManager.InteractWithMasterVillager();
                 }
             }
         }
     }
 
+    /// <summary>
+    /// Displays the clue bubble for a villager.
+    /// </summary>
     void ShowBubble(Villager villager)
     {
         if (currentBubble != null)
@@ -46,19 +52,21 @@ public class PlayerInteraction : MonoBehaviour
             Destroy(currentBubble);
         }
 
-        currentBubble = Instantiate(villager.bubblePrefab); // Bubble prefab defined in Villager
-        Bubble bubbleScript = currentBubble.GetComponent<Bubble>();
-
-        if (bubbleScript != null)
+        if (villager.bubblePrefab != null)
         {
-            bubbleScript.SetClue(villager.GetClue());
-            bubbleScript.SetPosition(villager.transform.position);
+            currentBubble = Instantiate(villager.bubblePrefab);
+            Bubble bubbleScript = currentBubble.GetComponent<Bubble>();
+
+            if (bubbleScript != null && villager.assignedClue != null)
+            {
+                bubbleScript.SetClue(villager.GetClueDetails());
+                bubbleScript.SetPosition(villager.transform.position);
+            }
         }
     }
 
     void OnDrawGizmos()
     {
-        // Visualize the interaction radius in the Scene view
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, interactionRadius);
     }

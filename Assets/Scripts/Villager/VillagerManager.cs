@@ -1,26 +1,36 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class VillagerManager : MonoBehaviour
 {
-    public GameObject villagerPrefab;
+    public GameObject villagerPrefab; // Villager prefab
     public Transform[] spawnPoints; // Positions to spawn villagers
-    private string[] clues = { "Clue 1", "Clue 2", "Clue 3" }; // Example clues
+    public List<Clue> availableClues; // List of pre-defined clues
 
     void Start()
     {
         InitializeVillagers();
     }
 
+    /// <summary>
+    /// Initializes villagers and assigns clues.
+    /// </summary>
     void InitializeVillagers()
     {
+        if (spawnPoints.Length == 0 || villagerPrefab == null)
+        {
+            Debug.LogError("VillagerManager: No spawn points or villager prefab assigned.");
+            return;
+        }
+
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             GameObject villager = Instantiate(villagerPrefab, spawnPoints[i].position, Quaternion.identity);
             Villager villagerScript = villager.GetComponent<Villager>();
 
-            if (villagerScript != null)
+            if (villagerScript != null && i < availableClues.Count)
             {
-                villagerScript.AssignClue(clues[i % clues.Length]); // Assign a clue
+                villagerScript.AssignClue(availableClues[i]);
             }
         }
     }
