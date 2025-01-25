@@ -52,27 +52,28 @@ public class ClueGenerator
         return clues;
     }
 
-    private Clue GenerateSequentialClue()
+private Clue GenerateSequentialClue()
+{
+    if (locationSequence.Count < 2)
     {
-        if (locationSequence.Count < 2)
-        {
-            Debug.LogWarning("Not enough locations in the sequence to generate a sequential clue.");
-            ResetLocationSequence();
-        }
-
-        Location seenAt = locationSequence[0];
-        Location nextLocation = locationSequence.Count == 2 ? finalLocation : locationSequence[1];
-        locationSequence.RemoveAt(0);
-
-        string time = times[Random.Range(0, times.Length)];
-
-        return new Clue
-        {
-            Time = time,
-            SeenAt = seenAt,
-            NextLocation = nextLocation
-        };
+        Debug.LogWarning("Not enough locations in the sequence to generate a sequential clue.");
+        ResetLocationSequence();
     }
+
+    Location seenAt = locationSequence[0];
+    Location nextLocation = locationSequence.Count == 2 ? finalLocation : locationSequence[1];
+    locationSequence.RemoveAt(0);
+
+    string time = times[Random.Range(0, times.Length)];
+
+    return new Clue
+    {
+        Time = time,
+        SeenAt = seenAt,
+        NextLocation = nextLocation
+    };
+}
+
 
     private void ResetLocationSequence()
     {
