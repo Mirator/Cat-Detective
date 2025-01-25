@@ -1,10 +1,15 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerInteraction : MonoBehaviour
 {
     public float interactionRadius = 1.5f; // Interaction range
+    public GameObject clueTrackerPrefab; // Prefab for a clue tracker item
+    public Transform clueTrackerParent; // Parent panel for clue tracker items
+
     private Villager currentVillager;
     private GameObject currentBubble;
+    private HashSet<Villager> interactedVillagers = new HashSet<Villager>(); // Track villagers already interacted with
 
     void Update()
     {
@@ -29,6 +34,7 @@ public class PlayerInteraction : MonoBehaviour
                 {
                     villager.Interact();
                     ShowBubble(villager);
+                    UpdateClueTracker(villager);
                 }
             }
             else if (hit.CompareTag("MasterVillager"))
@@ -59,9 +65,15 @@ public class PlayerInteraction : MonoBehaviour
 
             if (bubbleScript != null && villager.assignedClue != null)
             {
+                Debug.Log($"Clue from villager: Time: {villager.assignedClue.Time}, Seen At: {villager.assignedClue.SeenAt}, Next Location: {villager.assignedClue.NextLocation}");
+
                 Sprite timeIcon = ClueIconManager.GetIconForTime(villager.assignedClue.Time);
                 Sprite seenAtIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.SeenAt);
                 Sprite nextLocationIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.NextLocation);
+
+                Debug.Log($"Time Icon: {(timeIcon != null ? timeIcon.name : "None")}");
+                Debug.Log($"SeenAt Icon: {(seenAtIcon != null ? seenAtIcon.name : "None")}");
+                Debug.Log($"NextLocation Icon: {(nextLocationIcon != null ? nextLocationIcon.name : "None")}");
 
                 bubbleScript.SetIcons(timeIcon, seenAtIcon, nextLocationIcon);
                 bubbleScript.SetPosition(villager.transform.position);
@@ -69,6 +81,44 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates the clue tracker panel for the interacted villager.
+    /// </summary>
+    void UpdateClueTracker(Villager villager)
+    {
+        if (interactedVillagers.Contains(villager))
+        {
+            Debug.Log($"Villager {villager.name} already interacted with. No new clue added.");
+            return;
+        }
+
+        interactedVillagers.Add(villager);
+
+        if (clueTrackerPrefab == null || clueTrackerParent == null)
+        {
+            Debug.LogError("Clue tracker prefab or parent is not assigned.");
+            return;
+        }
+
+        if (villager.assignedClue == null)
+        {
+            Debug.LogWarning($"Villager {villager.name} has no clue assigned.");
+            return;
+        }
+
+        GameObject trackerItem = Instantiate(clueTrackerPrefab, clueTrackerParent);
+        ClueTrackerItem trackerScript = trackerItem.GetComponent<ClueTrackerItem>();
+
+        if (trackerScript != null)
+        {
+            trackerScript.SetClue(villager.assignedClue);
+            Debug.Log($"Added clue to tracker: Time: {villager.assignedClue.Time}, Seen At: {villager.assignedClue.SeenAt}, Next Location: {villager.assignedClue.NextLocation}");
+        }
+        else
+        {
+            Debug.LogError("ClueTrackerItem script not found on prefab.");
+        }
+    }
 
     void OnDrawGizmos()
     {

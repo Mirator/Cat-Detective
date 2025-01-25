@@ -14,7 +14,7 @@ public void SetFinalLocation(List<Location> locations)
 {
     if (finalLocation != default)
     {
-        Debug.Log($"Final location already set to: {finalLocation}. Skipping.");
+        //Debug.Log($"Final location already set to: {finalLocation}. Skipping.");
         return;
     }
 
@@ -26,7 +26,7 @@ public void SetFinalLocation(List<Location> locations)
     } while (newFinalLocation == Location.Garden);
 
     finalLocation = newFinalLocation;
-    Debug.Log($"Final location set: {finalLocation}");
+    //Debug.Log($"Final location set: {finalLocation}");
 }
 
 

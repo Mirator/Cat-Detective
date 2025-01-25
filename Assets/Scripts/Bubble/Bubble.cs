@@ -11,68 +11,66 @@ public class Bubble : MonoBehaviour
     {
         if (timeIcon != null)
         {
-            Debug.Log($"Time Icon Image Component Exists: {timeIcon}");
-            Debug.Log($"Setting Time Icon to: {time?.name ?? "None"}");
+            //Debug.Log($"Setting Time Icon to: {(time != null ? time.name : "None")}");
             timeIcon.sprite = time;
         }
 
         if (seenAtIcon != null)
         {
-            Debug.Log($"SeenAt Icon Image Component Exists: {seenAtIcon}");
-            Debug.Log($"Setting SeenAt Icon to: {seenAt?.name ?? "None"}");
+            //Debug.Log($"Setting SeenAt Icon to: {(seenAt != null ? seenAt.name : "None")}");
             seenAtIcon.sprite = seenAt;
         }
 
         if (nextLocationIcon != null)
         {
-            Debug.Log($"NextLocation Icon Image Component Exists: {nextLocationIcon}");
-            Debug.Log($"Setting NextLocation Icon to: {nextLocation?.name ?? "None"}");
+            //Debug.Log($"Setting NextLocation Icon to: {(nextLocation != null ? nextLocation.name : "None")}");
             nextLocationIcon.sprite = nextLocation;
         }
     }
 
-/// <summary>
-/// Sets the icons in the bubble based on the provided clue.
-/// </summary>
-public void SetClue(Clue clue)
-{
-    if (clue == null)
+
+    /// <summary>
+    /// Sets the icons in the bubble based on the provided clue.
+    /// </summary>
+    public void SetClue(Clue clue)
     {
-        Debug.LogError("Clue is null. Cannot set bubble details.");
-        return;
+        if (clue == null)
+        {
+            Debug.LogError("Clue is null. Cannot set bubble details.");
+            return;
+        }
+
+        // Set time icon
+        Sprite timeSprite = ClueIconManager.GetIconForTime(clue.Time);
+        if (timeIcon != null)
+        {
+            timeIcon.sprite = timeSprite;
+            timeIcon.gameObject.SetActive(timeSprite != null);
+        }
+
+        // Set seenAt icon
+        Sprite seenAtSprite = ClueIconManager.GetIconForLocation(clue.SeenAt);
+        if (seenAtIcon != null)
+        {
+            seenAtIcon.sprite = seenAtSprite;
+            seenAtIcon.gameObject.SetActive(seenAtSprite != null);
+        }
+
+        // Set nextLocation icon
+        Sprite nextLocationSprite = ClueIconManager.GetIconForLocation(clue.NextLocation);
+        if (nextLocationIcon != null)
+        {
+            nextLocationIcon.sprite = nextLocationSprite;
+            nextLocationIcon.gameObject.SetActive(nextLocationSprite != null);
+        }
     }
 
-    // Set time icon
-    Sprite timeSprite = ClueIconManager.GetIconForTime(clue.Time);
-    if (timeIcon != null)
+
+    /// <summary>
+    /// Sets the position of the bubble above the villager.
+    /// </summary>
+    public void SetPosition(Vector3 position)
     {
-        timeIcon.sprite = timeSprite;
-        timeIcon.gameObject.SetActive(timeSprite != null);
+        transform.position = position;
     }
-
-    // Set seenAt icon
-    Sprite seenAtSprite = ClueIconManager.GetIconForLocation(clue.SeenAt);
-    if (seenAtIcon != null)
-    {
-        seenAtIcon.sprite = seenAtSprite;
-        seenAtIcon.gameObject.SetActive(seenAtSprite != null);
-    }
-
-    // Set nextLocation icon
-    Sprite nextLocationSprite = ClueIconManager.GetIconForLocation(clue.NextLocation);
-    if (nextLocationIcon != null)
-    {
-        nextLocationIcon.sprite = nextLocationSprite;
-        nextLocationIcon.gameObject.SetActive(nextLocationSprite != null);
-    }
-}
-
-
-/// <summary>
-/// Sets the position of the bubble above the villager.
-/// </summary>
-public void SetPosition(Vector3 position)
-{
-    transform.position = position + Vector3.up * 1.5f; // Offset for better visibility
-}
 }

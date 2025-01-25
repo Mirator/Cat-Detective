@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f5bed9964e758459dae46e2088ee7997
+guid: 480b77cc95af2409ab4c696573af1ece
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -9132518384313571126
-    second: Barn_0
+      213: -8376385930386892364
+    second: cat_speech_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Barn_0
+      name: cat_speech_0
       rect:
         serializedVersion: 2
-        x: 6
-        y: 2
-        width: 123
-        height: 113
+        x: 0
+        y: 5
+        width: 200
+        height: 95
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ac8e3466ae6c24180800000000000000
-      internalID: -9132518384313571126
+      spriteID: 4b995b5506911cb80800000000000000
+      internalID: -8376385930386892364
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Barn_0: -9132518384313571126
+      cat_speech_0: -8376385930386892364
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

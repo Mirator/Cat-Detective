@@ -34,7 +34,7 @@ public class PuzzleManager : MonoBehaviour
     public void SetFinalLocation(Location location)
     {
         finalLocation = location;
-        Debug.Log($"Final location set in PuzzleManager: {finalLocation}");
+        //Debug.Log($"Final location set in PuzzleManager: {finalLocation}");
     }
 
     /// <summary>
