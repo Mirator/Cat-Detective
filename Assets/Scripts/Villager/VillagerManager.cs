@@ -3,19 +3,19 @@ using UnityEngine;
 
 public class VillagerManager : MonoBehaviour
 {
-    public GameObject villagerPrefab;
-    public Transform[] spawnPoints;
-    public string[] times = { "Morning", "Late Morning", "Noon", "Afternoon", "Evening" };
-    public List<Location> locations;
+    public GameObject villagerPrefab; // Prefab for villagers
+    public Transform[] spawnPoints; // Spawn points for villagers
+    public string[] times = { "Morning", "Late Morning", "Noon", "Afternoon", "Evening" }; // Available times
+    public List<Location> locations; // List of locations in the game
 
-    private Dictionary<Location, List<Location>> mapConnections;
     private FinalLocationManager finalLocationManager;
+    private PuzzleManager puzzleManager; // Reference to PuzzleManager
 
     void Start()
     {
-        InitializeMapConnections();
         InitializeLocations();
 
+        // Find FinalLocationManager
         finalLocationManager = FindFirstObjectByType<FinalLocationManager>();
         if (finalLocationManager == null)
         {
@@ -23,24 +23,22 @@ public class VillagerManager : MonoBehaviour
             return;
         }
 
-        finalLocationManager.SetFinalLocation(locations);
-        GenerateAndAssignClues(finalLocationManager.GetFinalLocation());
-    }
-
-    /// <summary>
-    /// Initializes the map connections.
-    /// </summary>
-    private void InitializeMapConnections()
-    {
-        mapConnections = new Dictionary<Location, List<Location>>
+        // Find PuzzleManager
+        puzzleManager = FindFirstObjectByType<PuzzleManager>();
+        if (puzzleManager == null)
         {
-            { Location.Garden, new List<Location> { Location.Bakery } },
-            { Location.Bakery, new List<Location> { Location.Garden, Location.Treehouse, Location.Market } },
-            { Location.Treehouse, new List<Location> { Location.Bakery, Location.Barn } },
-            { Location.Market, new List<Location> { Location.Bakery, Location.Barn, Location.Riverbank } },
-            { Location.Barn, new List<Location> { Location.Market, Location.Treehouse } },
-            { Location.Riverbank, new List<Location> { Location.Market } }
-        };
+            Debug.LogError("PuzzleManager not found in the scene!");
+            return;
+        }
+
+        // Set the final location in both managers
+        finalLocationManager.SetFinalLocation(locations);
+        Location finalLocation = finalLocationManager.GetFinalLocation();
+        puzzleManager.SetFinalLocation(finalLocation);
+
+        // Build the map and generate clues
+        Graph<Location> map = BuildGraph();
+        GenerateAndAssignClues(finalLocation, map);
     }
 
     /// <summary>
@@ -56,10 +54,30 @@ public class VillagerManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Builds a graph representation of the map.
+    /// </summary>
+    /// <returns>The graph representing the map.</returns>
+    private Graph<Location> BuildGraph()
+    {
+        Graph<Location> map = new Graph<Location>();
+
+        // Define map connections
+        map.AddEdge(Location.Garden, Location.Bakery);
+        map.AddEdge(Location.Bakery, Location.Treehouse);
+        map.AddEdge(Location.Bakery, Location.Market);
+        map.AddEdge(Location.Treehouse, Location.Barn);
+        map.AddEdge(Location.Market, Location.Barn);
+        map.AddEdge(Location.Market, Location.Riverbank);
+
+        return map;
+    }
+
+    /// <summary>
     /// Generates and assigns clues to villagers.
     /// </summary>
     /// <param name="finalLocation">The final location for the correct path.</param>
-    private void GenerateAndAssignClues(Location finalLocation)
+    /// <param name="map">The graph representing the map.</param>
+    private void GenerateAndAssignClues(Location finalLocation, Graph<Location> map)
     {
         if (villagerPrefab == null)
         {
@@ -73,7 +91,7 @@ public class VillagerManager : MonoBehaviour
             return;
         }
 
-        ClueGenerator clueGenerator = new ClueGenerator(locations, times, mapConnections, spawnPoints.Length, finalLocation);
+        ClueGenerator clueGenerator = new ClueGenerator(map, times, spawnPoints.Length, finalLocation);
         List<Clue> clues = clueGenerator.GenerateClues();
 
         if (spawnPoints.Length > clues.Count)

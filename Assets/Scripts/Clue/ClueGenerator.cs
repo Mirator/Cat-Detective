@@ -3,118 +3,126 @@ using UnityEngine;
 
 public class ClueGenerator
 {
-    private List<Location> locationSequence;
-    private List<Location> locationSequenceBackup;
+    private Graph<Location> map;
     private string[] times;
     private int numberOfVillagers;
-    private Dictionary<Location, List<Location>> mapConnections;
     private Location finalLocation;
 
-    public ClueGenerator(
-        List<Location> locations,
-        string[] times,
-        Dictionary<Location, List<Location>> mapConnections,
-        int numberOfVillagers,
-        Location finalLocation)
+    public ClueGenerator(Graph<Location> map, string[] times, int numberOfVillagers, Location finalLocation)
     {
-        this.locationSequence = new List<Location>(locations);
-        this.locationSequenceBackup = new List<Location>(locations);
+        this.map = map;
         this.times = times;
-        this.mapConnections = mapConnections;
         this.numberOfVillagers = numberOfVillagers;
         this.finalLocation = finalLocation;
     }
 
+    /// <summary>
+    /// Generates all clues (correct, incorrect, random).
+    /// </summary>
     public List<Clue> GenerateClues()
     {
         List<Clue> clues = new List<Clue>();
-        int correctClueCount = Mathf.CeilToInt(numberOfVillagers * 0.5f);
-        int incorrectClueCount = numberOfVillagers - correctClueCount;
 
-        for (int i = 0; i < correctClueCount; i++)
-        {
-            Clue correctClue = GenerateSequentialClue();
-            if (correctClue != null)
-            {
-                clues.Add(correctClue);
-            }
-        }
+        int correctClueCount = Mathf.Clamp((int)(numberOfVillagers * Random.Range(0.51f, 0.75f)), 1, numberOfVillagers);
+        int incorrectClueCount = Mathf.Clamp((int)(numberOfVillagers * Random.Range(0.1f, 0.25f)), 0, numberOfVillagers - correctClueCount);
+        int randomClueCount = numberOfVillagers - correctClueCount - incorrectClueCount;
 
-        for (int i = 0; i < incorrectClueCount; i++)
-        {
-            Clue randomClue = GenerateRandomClue();
-            if (randomClue != null)
-            {
-                clues.Add(randomClue);
-            }
-        }
+        Debug.Log($"Clues: {correctClueCount} correct, {incorrectClueCount} incorrect, {randomClueCount} random");
+
+        clues.AddRange(GenerateCorrectClues(correctClueCount));
+        clues.AddRange(GenerateIncorrectClues(incorrectClueCount));
+        clues.AddRange(GenerateRandomClues(randomClueCount));
 
         return clues;
     }
 
-private Clue GenerateSequentialClue()
-{
-    if (locationSequence.Count < 2)
+    private List<Clue> GenerateCorrectClues(int count)
     {
-        Debug.LogWarning("Not enough locations in the sequence to generate a sequential clue.");
-        ResetLocationSequence();
-    }
+        List<Clue> correctClues = new List<Clue>();
+        List<Location> path = map.GetPathTo(finalLocation);
 
-    Location seenAt = locationSequence[0];
-    Location nextLocation = locationSequence.Count == 2 ? finalLocation : locationSequence[1];
-    locationSequence.RemoveAt(0);
-
-    string time = times[Random.Range(0, times.Length)];
-
-    return new Clue
-    {
-        Time = time,
-        SeenAt = seenAt,
-        NextLocation = nextLocation
-    };
-}
-
-
-    private void ResetLocationSequence()
-    {
-        Debug.Log("Resetting location sequence.");
-        locationSequence = new List<Location>(locationSequenceBackup);
-    }
-
-    private Clue GenerateRandomClue()
-    {
-        Location seenAt = GetRandomLocation();
-        Location nextLocation = GetRandomConnectedLocation(seenAt);
-
-        string time = times[Random.Range(0, times.Length)];
-
-        return new Clue
+        for (int i = 0; i < count && path.Count > 1; i++)
         {
-            Time = time,
-            SeenAt = seenAt,
-            NextLocation = nextLocation
-        };
+            Location seenAt = path[0];
+            Location nextLocation = path[1];
+            path.RemoveAt(0);
+
+            string time = times[Random.Range(0, times.Length)];
+
+            correctClues.Add(new Clue
+            {
+                Time = time,
+                SeenAt = seenAt,
+                NextLocation = nextLocation
+            });
+
+            if (nextLocation == finalLocation)
+            {
+                Debug.Log($"Final clue: {seenAt} -> {nextLocation}");
+            }
+        }
+
+        return correctClues;
+    }
+
+    private List<Clue> GenerateIncorrectClues(int count)
+    {
+        List<Clue> incorrectClues = new List<Clue>();
+
+        for (int i = 0; i < count; i++)
+        {
+            Location seenAt = GetRandomLocation();
+            Location nextLocation = GetRandomConnectedLocation(seenAt);
+
+            if (nextLocation == finalLocation)
+            {
+                nextLocation = GetRandomConnectedLocation(nextLocation);
+            }
+
+            string time = times[Random.Range(0, times.Length)];
+
+            incorrectClues.Add(new Clue
+            {
+                Time = time,
+                SeenAt = seenAt,
+                NextLocation = nextLocation
+            });
+        }
+
+        return incorrectClues;
+    }
+
+    private List<Clue> GenerateRandomClues(int count)
+    {
+        List<Clue> randomClues = new List<Clue>();
+
+        for (int i = 0; i < count; i++)
+        {
+            Location seenAt = GetRandomLocation();
+            Location nextLocation = GetRandomLocation();
+
+            string time = times[Random.Range(0, times.Length)];
+
+            randomClues.Add(new Clue
+            {
+                Time = time,
+                SeenAt = seenAt,
+                NextLocation = nextLocation
+            });
+        }
+
+        return randomClues;
     }
 
     private Location GetRandomLocation()
     {
-        if (locationSequence == null || locationSequence.Count == 0)
-        {
-            Debug.LogError("No locations available for GetRandomLocation.");
-            ResetLocationSequence();
-        }
-
-        return locationSequence[Random.Range(0, locationSequence.Count)];
+        List<Location> allLocations = map.GetAllNodes();
+        return allLocations[Random.Range(0, allLocations.Count)];
     }
 
     private Location GetRandomConnectedLocation(Location currentLocation)
     {
-        if (mapConnections.ContainsKey(currentLocation))
-        {
-            List<Location> connections = mapConnections[currentLocation];
-            return connections[Random.Range(0, connections.Count)];
-        }
-
-        return currentLocation;
+        List<Location> connections = map.GetConnections(currentLocation);
+        return connections[Random.Range(0, connections.Count)];
     }
 }
