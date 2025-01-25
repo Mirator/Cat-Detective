@@ -17,7 +17,7 @@ public class PathManager
         HashSet<Location> visited = new HashSet<Location>();
 
         // Ensure path length is 3 or 4
-        int pathLength = 4
+        int pathLength = 4;
 
         Location current = start;
         path.Add(current);
