@@ -5,7 +5,7 @@ public class ClueManager : MonoBehaviour
 {
     public List<Clue> clues = new List<Clue>(); // All generated clues
     public List<Location> locations = new List<Location>(); // Available locations
-    public string[] times = { "Morning", "Noon", "Evening" }; // Time options
+    public List<TimeOfDay> times = new List<TimeOfDay> { TimeOfDay.Morning, TimeOfDay.Noon, TimeOfDay.Evening }; // Time options
     public List<Villager> villagers = new List<Villager>(); // All villagers in the scene
 
     private Dictionary<Location, List<Location>> mapConnections = new Dictionary<Location, List<Location>>(); // Map structure
@@ -46,7 +46,7 @@ public class ClueManager : MonoBehaviour
     {
         foreach (Location location in locations)
         {
-            string time = times[Random.Range(0, times.Length)];
+            TimeOfDay time = times[Random.Range(0, times.Count)];
             Location nextLocation = GetRandomConnectedLocation(location);
 
             Clue clue = new Clue

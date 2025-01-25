@@ -5,7 +5,7 @@ public class VillagerManager : MonoBehaviour
 {
     public GameObject villagerPrefab; // Prefab for villagers
     public Transform[] spawnPoints; // Spawn points for villagers
-    public string[] times = { "Morning", "Noon", "Evening" }; // Available times
+    public TimeOfDay[] times = { TimeOfDay.Morning, TimeOfDay.Noon, TimeOfDay.Evening }; // Available times
     public List<Location> locations; // List of locations in the game
 
     private FinalLocationManager finalLocationManager;
@@ -32,7 +32,7 @@ public class VillagerManager : MonoBehaviour
         mapManager = new MapManager();
         pathManager = new PathManager(mapManager);
 
-        // Generate the path and clues
+        // Generate the path
         int numberOfVillagers = spawnPoints.Length; // Total number of villagers
         List<Location> validatedPath = pathManager.GeneratePath(Location.Garden, finalLocation, numberOfVillagers);
 
@@ -42,8 +42,9 @@ public class VillagerManager : MonoBehaviour
             return;
         }
 
-        ClueFactory clueFactory = new ClueFactory(mapManager.GetConnections(), times, validatedPath);
-        List<Clue> clues = clueFactory.GenerateClues(
+        // Generate clues using ClueGenerator
+        ClueGenerator clueGenerator = new ClueGenerator(mapManager, mapManager.GetConnections(), validatedPath, times);
+        List<Clue> clues = clueGenerator.GenerateClues(
             correctClueCount: Mathf.Max(3, validatedPath.Count - 1), // Ensure sufficient correct clues
             incorrectClueCount: Mathf.Clamp(numberOfVillagers / 2 - 1, 1, numberOfVillagers - 1),
             randomClueCount: Mathf.Clamp(numberOfVillagers / 4, 0, numberOfVillagers - 1)
@@ -70,6 +71,10 @@ public class VillagerManager : MonoBehaviour
 
             if (villagerScript != null && i < clues.Count)
             {
+                foreach (var clue in clues)
+                {
+                    Debug.Log($"[VillagerManager] Clue to assign: Time={clue.Time}, SeenAt={clue.SeenAt}, NextLocation={clue.NextLocation}");
+                }
                 villagerScript.AssignClue(clues[i]);
                 Debug.Log($"Villager spawned at {spawnPoints[i].position} with clue: {clues[i].Time}, {clues[i].SeenAt}, {clues[i].NextLocation}");
             }

@@ -3,15 +3,15 @@ using UnityEngine;
 
 public static class ClueIconManager
 {
-    private static Dictionary<string, Sprite> timeIcons = new Dictionary<string, Sprite>();
+    private static Dictionary<TimeOfDay, Sprite> timeIcons = new Dictionary<TimeOfDay, Sprite>();
     private static Dictionary<Location, Sprite> locationIcons = new Dictionary<Location, Sprite>();
 
     static ClueIconManager()
     {
         // Load time icons
-        timeIcons["Morning"] = Resources.Load<Sprite>("Icons/Time/Morning");
-        timeIcons["Noon"] = Resources.Load<Sprite>("Icons/Time/Noon");
-        timeIcons["Evening"] = Resources.Load<Sprite>("Icons/Time/Evening");
+        timeIcons[TimeOfDay.Morning] = Resources.Load<Sprite>("Icons/Time/Morning");
+        timeIcons[TimeOfDay.Noon] = Resources.Load<Sprite>("Icons/Time/Noon");
+        timeIcons[TimeOfDay.Evening] = Resources.Load<Sprite>("Icons/Time/Evening");
 
         // Load location icons
         locationIcons[Location.Store] = Resources.Load<Sprite>("Icons/Location/Store");
@@ -22,9 +22,17 @@ public static class ClueIconManager
         locationIcons[Location.Bakery] = Resources.Load<Sprite>("Icons/Location/Bakery");
     }
 
-    public static Sprite GetIconForTime(string time)
+    public static Sprite GetIconForTime(TimeOfDay time)
     {
-        return timeIcons.ContainsKey(time) ? timeIcons[time] : null;
+        if (timeIcons.ContainsKey(time))
+        {
+            return timeIcons[time];
+        }
+        else
+        {
+            Debug.LogWarning($"No icon found for time of day: {time}");
+            return null;
+        }
     }
 
     public static Sprite GetIconForLocation(Location location)
@@ -32,7 +40,6 @@ public static class ClueIconManager
         if (locationIcons.ContainsKey(location))
         {
             Sprite icon = locationIcons[location];
-            //Debug.Log($"Loaded icon for location: {location} -> {(icon != null ? icon.name : "None")}");
             return icon;
         }
         else
@@ -41,7 +48,4 @@ public static class ClueIconManager
             return null;
         }
     }
-
-
-
 }

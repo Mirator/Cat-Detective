@@ -3,7 +3,7 @@ using UnityEngine;
 [System.Serializable]
 public class Clue
 {
-    public string Time; // Time when the kitten was last seen
-    public Location SeenAt; // Location where the kitten was seen
-    public Location NextLocation; // Location where the kitten went next
+    public TimeOfDay Time { get; set; } // Use TimeOfDay enum
+    public Location SeenAt { get; set; }
+    public Location NextLocation { get; set; }
 }
