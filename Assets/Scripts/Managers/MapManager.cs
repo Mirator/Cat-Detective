@@ -33,6 +33,9 @@ public class MapManager
         AddConnection(Location.Market, Location.Riverbank);
         AddConnection(Location.Riverbank, Location.Market);
 
+        AddConnection(Location.Barn, Location.Riverbank);
+        AddConnection(Location.Riverbank, Location.Barn);
+
     }
 
     /// <summary>
