@@ -4,6 +4,6 @@ public enum Location
     Bakery,
     Barn,
     Treehouse,
-    Riverbank,
-    Market
+    Beach,
+    Store
 }

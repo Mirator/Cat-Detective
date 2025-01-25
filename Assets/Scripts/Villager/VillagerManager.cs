@@ -5,7 +5,7 @@ public class VillagerManager : MonoBehaviour
 {
     public GameObject villagerPrefab; // Prefab for villagers
     public Transform[] spawnPoints; // Spawn points for villagers
-    public string[] times = { "Morning", "Late Morning", "Noon", "Afternoon", "Evening" }; // Available times
+    public string[] times = { "Morning", "Noon", "Evening" }; // Available times
     public List<Location> locations; // List of locations in the game
 
     private FinalLocationManager finalLocationManager;

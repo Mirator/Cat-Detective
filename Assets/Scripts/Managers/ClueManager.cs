@@ -5,7 +5,7 @@ public class ClueManager : MonoBehaviour
 {
     public List<Clue> clues = new List<Clue>(); // All generated clues
     public List<Location> locations = new List<Location>(); // Available locations
-    public string[] times = { "Morning", "Late Morning", "Noon", "Afternoon", "Evening" }; // Time options
+    public string[] times = { "Morning", "Noon", "Evening" }; // Time options
     public List<Villager> villagers = new List<Villager>(); // All villagers in the scene
 
     private Dictionary<Location, List<Location>> mapConnections = new Dictionary<Location, List<Location>>(); // Map structure
@@ -32,11 +32,11 @@ public class ClueManager : MonoBehaviour
     private void GenerateMapConnections()
     {
         mapConnections.Add(Location.Garden, new List<Location> { Location.Bakery });
-        mapConnections.Add(Location.Bakery, new List<Location> { Location.Garden, Location.Treehouse, Location.Market });
+        mapConnections.Add(Location.Bakery, new List<Location> { Location.Garden, Location.Treehouse, Location.Store });
         mapConnections.Add(Location.Treehouse, new List<Location> { Location.Bakery, Location.Barn });
-        mapConnections.Add(Location.Market, new List<Location> { Location.Bakery, Location.Barn, Location.Riverbank });
-        mapConnections.Add(Location.Barn, new List<Location> { Location.Market, Location.Treehouse });
-        mapConnections.Add(Location.Riverbank, new List<Location> { Location.Market });
+        mapConnections.Add(Location.Store, new List<Location> { Location.Bakery, Location.Barn, Location.Beach });
+        mapConnections.Add(Location.Barn, new List<Location> { Location.Store, Location.Treehouse });
+        mapConnections.Add(Location.Beach, new List<Location> { Location.Store });
     }
 
     /// <summary>

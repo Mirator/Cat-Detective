@@ -17,10 +17,10 @@ public class MapManager
         AddConnection(Location.Garden, Location.Bakery);
         AddConnection(Location.Bakery, Location.Treehouse);
         AddConnection(Location.Treehouse, Location.Barn);
-        AddConnection(Location.Bakery, Location.Market);
-        AddConnection(Location.Market, Location.Barn);
-        AddConnection(Location.Market, Location.Riverbank);
-        AddConnection(Location.Barn, Location.Riverbank);
+        AddConnection(Location.Bakery, Location.Store);
+        AddConnection(Location.Store, Location.Barn);
+        AddConnection(Location.Store, Location.Beach);
+        AddConnection(Location.Barn, Location.Beach);
     }
 
 

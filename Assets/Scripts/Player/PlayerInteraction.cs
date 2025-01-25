@@ -59,11 +59,16 @@ public class PlayerInteraction : MonoBehaviour
 
             if (bubbleScript != null && villager.assignedClue != null)
             {
-                bubbleScript.SetClue(villager.GetClueDetails());
+                Sprite timeIcon = ClueIconManager.GetIconForTime(villager.assignedClue.Time);
+                Sprite seenAtIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.SeenAt);
+                Sprite nextLocationIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.NextLocation);
+
+                bubbleScript.SetIcons(timeIcon, seenAtIcon, nextLocationIcon);
                 bubbleScript.SetPosition(villager.transform.position);
             }
         }
     }
+
 
     void OnDrawGizmos()
     {
