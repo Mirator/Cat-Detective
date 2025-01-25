@@ -15,12 +15,24 @@ public class MapManager
     private void InitializeConnections()
     {
         AddConnection(Location.Garden, Location.Bakery);
+        AddConnection(Location.Bakery, Location.Garden);
+
         AddConnection(Location.Bakery, Location.Treehouse);
+        AddConnection(Location.Treehouse, Location.Bakery);
+
+        AddConnection(Location.Treehouse, Location.Barn);
+        AddConnection(Location.Barn, Location.Treehouse);
+
         AddConnection(Location.Bakery, Location.Market);
-        AddConnection(Location.Treehouse, Location.Market);
+        AddConnection(Location.Market, Location.Bakery);
+
+
         AddConnection(Location.Market, Location.Barn);
+        AddConnection(Location.Barn, Location.Market);
+
         AddConnection(Location.Market, Location.Riverbank);
-        AddConnection(Location.Barn, Location.Riverbank);
+        AddConnection(Location.Riverbank, Location.Market);
+
     }
 
     /// <summary>
