@@ -71,14 +71,24 @@ public class ClueFactory
 
         for (int i = 0; i < count; i++)
         {
+            Location seenAt = ClueUtils.GetRandomLocation(mapConnections);
+            Location nextLocation;
+
+            // Ensure the start and end are not the same
+            do
+            {
+                nextLocation = ClueUtils.GetRandomLocation(mapConnections);
+            } while (nextLocation == seenAt);
+
             randomClues.Add(new Clue
             {
                 Time = times[Random.Range(0, times.Length)],
-                SeenAt = ClueUtils.GetRandomLocation(mapConnections),
-                NextLocation = ClueUtils.GetRandomLocation(mapConnections)
+                SeenAt = seenAt,
+                NextLocation = nextLocation
             });
         }
 
         return randomClues;
     }
+
 }
