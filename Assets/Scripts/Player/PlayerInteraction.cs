@@ -33,7 +33,7 @@ public class PlayerInteraction : MonoBehaviour
                 if (villager != null)
                 {
                     villager.Interact();
-                    ShowBubble(villager);
+                    //ShowBubble(villager);
                     UpdateClueTracker(villager);
                 }
             }
