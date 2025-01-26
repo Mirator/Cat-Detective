@@ -6,6 +6,7 @@ public class PlayerInteraction : MonoBehaviour
     public float interactionRadius = 1.5f; // Interaction range
     public GameObject clueTrackerPrefab; // Prefab for a clue tracker item
     public Transform clueTrackerParent; // Parent panel for clue tracker items
+    public HelperManager helperManager; // Reference to the HelperManager script
 
     private Villager currentVillager;
     private GameObject currentBubble;
@@ -33,7 +34,6 @@ public class PlayerInteraction : MonoBehaviour
                 if (villager != null)
                 {
                     villager.Interact();
-                    //ShowBubble(villager);
                     UpdateClueTracker(villager);
                 }
             }
@@ -47,37 +47,17 @@ public class PlayerInteraction : MonoBehaviour
                     return;
                 }
 
-                // Initialize GamePuzzleManager if not already done
-                gamePuzzleManager.Initialize();
-                gamePuzzleManager.InteractWithMasterVillager();
+                // Trigger helper text logic
+                helperManager.InteractWithMasterVillager();
+
+                // Show puzzle UI only if it's ready to be shown
+                if (helperManager.ShouldShowPuzzle() && !gamePuzzleManager.puzzleUI.activeSelf)
+                {
+                    gamePuzzleManager.Initialize();
+                    gamePuzzleManager.InteractWithMasterVillager();
+                }
             }
-        }
-    }
 
-    /// <summary>
-    /// Displays the clue bubble for a villager.
-    /// </summary>
-    void ShowBubble(Villager villager)
-    {
-        if (currentBubble != null)
-        {
-            Destroy(currentBubble);
-        }
-
-        if (villager.bubblePrefab != null)
-        {
-            currentBubble = Instantiate(villager.bubblePrefab);
-            Bubble bubbleScript = currentBubble.GetComponent<Bubble>();
-
-            if (bubbleScript != null && villager.assignedClue != null)
-            {
-                Sprite timeIcon = ClueIconManager.GetIconForTime(villager.assignedClue.Time);
-                Sprite seenAtIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.SeenAt);
-                Sprite nextLocationIcon = ClueIconManager.GetIconForLocation(villager.assignedClue.NextLocation);
-
-                bubbleScript.SetIcons(timeIcon, seenAtIcon, nextLocationIcon);
-                bubbleScript.SetPosition(villager.transform.position);
-            }
         }
     }
 

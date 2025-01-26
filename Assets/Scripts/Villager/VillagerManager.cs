@@ -46,9 +46,9 @@ public class VillagerManager : MonoBehaviour
         // Generate clues using ClueGenerator
         ClueGenerator clueGenerator = new ClueGenerator(mapManager, mapManager.GetConnections(), validatedPath, times);
         List<Clue> clues = clueGenerator.GenerateClues(
-            correctClueCount: Mathf.Max(3, validatedPath.Count - 1), // Ensure sufficient correct clues
-            incorrectClueCount: Mathf.Clamp(numberOfVillagers / 2 - 1, 1, numberOfVillagers - 1),
-            randomClueCount: Mathf.Clamp(numberOfVillagers / 4, 0, numberOfVillagers - 1)
+            correctClueCount: 3,
+            incorrectClueCount: 0,
+            randomClueCount: 3
         );
 
         GenerateAndAssignClues(clues);

@@ -12,6 +12,7 @@ public class GamePuzzleManager : MonoBehaviour
     public TextMeshProUGUI headerText; // Header text for the UI
 
     private Location correctFinalLocation; // Correct final location from FinalLocationManager
+    private HelperManager helperManager; // Reference to the HelperManager
 
     /// <summary>
     /// Initializes the GamePuzzleManager and fetches the final location.
@@ -35,6 +36,14 @@ public class GamePuzzleManager : MonoBehaviour
         }
 
         Debug.Log($"GamePuzzleManager initialized. Correct final location: {correctFinalLocation}");
+
+        // Get reference to the HelperManager
+        helperManager = Object.FindFirstObjectByType<HelperManager>();
+        if (helperManager == null)
+        {
+            Debug.LogError("HelperManager not found in the scene!");
+            return;
+        }
 
         // Generate location buttons and hide the UI initially
         GenerateLocationButtons();
@@ -100,12 +109,17 @@ public class GamePuzzleManager : MonoBehaviour
         if (selectedLocation == correctFinalLocation)
         {
             Debug.Log("You Win! Correct final location reached.");
+            helperManager.GameWon(); // Update helper text for win
         }
         else
         {
             Debug.Log($"Incorrect location selected: {selectedLocation}. The correct location was: {correctFinalLocation}");
             Debug.Log("Game Over!"); // Lose message
+            helperManager.GameLost(); // Update helper text for loss
         }
+
+        // Hide puzzle UI after selection
+        puzzleUI.SetActive(false);
     }
 
     /// <summary>
@@ -119,16 +133,23 @@ public class GamePuzzleManager : MonoBehaviour
             return;
         }
 
-        // Clear existing buttons to avoid duplication
-        foreach (Transform child in buttonContainer)
+        if (!helperManager.ShouldShowPuzzle())
         {
-            Destroy(child.gameObject);
+            helperManager.InteractWithMasterVillager();
         }
+        else
+        {
+            // Clear existing buttons to avoid duplication
+            foreach (Transform child in buttonContainer)
+            {
+                Destroy(child.gameObject);
+            }
 
-        // Regenerate the buttons
-        GenerateLocationButtons();
+            // Regenerate the buttons
+            GenerateLocationButtons();
 
-        puzzleUI.SetActive(true);
-        headerText.text = "Choose a Location:"; // Update the header text
+            puzzleUI.SetActive(true);
+            headerText.text = "Choose a Location:"; // Update the header text
+        }
     }
 }
