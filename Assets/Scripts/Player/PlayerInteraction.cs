@@ -79,17 +79,8 @@ public class PlayerInteraction : MonoBehaviour
         {
             if (!audioSource.isPlaying)
             {
-                Debug.Log("Playing meow sound.");
                 audioSource.Play();
             }
-            else
-            {
-                Debug.Log("Audio is already playing, skipping.");
-            }
-        }
-        else
-        {
-            Debug.LogError("AudioSource is not assigned!");
         }
     }
 
@@ -100,7 +91,6 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (interactedVillagers.Contains(villager))
         {
-            Debug.Log($"Villager {villager.name} already interacted with. No new clue added.");
             return;
         }
 
