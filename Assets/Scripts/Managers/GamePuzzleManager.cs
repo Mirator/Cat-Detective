@@ -46,6 +46,12 @@ public class GamePuzzleManager : MonoBehaviour
     /// </summary>
     private void GenerateLocationButtons()
     {
+        // Clear existing buttons before generating new ones
+        foreach (Transform child in buttonContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
         // Get all locations from the Location enum
         Location[] allLocations = (Location[])System.Enum.GetValues(typeof(Location));
 
@@ -112,6 +118,16 @@ public class GamePuzzleManager : MonoBehaviour
             Debug.LogError("GamePuzzleManager is not initialized!");
             return;
         }
+
+        // Clear existing buttons to avoid duplication
+        foreach (Transform child in buttonContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Regenerate the buttons
+        GenerateLocationButtons();
+
         puzzleUI.SetActive(true);
         headerText.text = "Choose a Location:"; // Update the header text
     }
