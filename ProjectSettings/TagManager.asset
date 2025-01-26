@@ -46,6 +46,12 @@ TagManager:
   - name: Player
     uniqueID: 2190657735
     locked: 0
+  - name: Furniture
+    uniqueID: 2161636033
+    locked: 0
+  - name: Floor
+    uniqueID: 733428909
+    locked: 0
   - name: Background
     uniqueID: 198539717
     locked: 0
