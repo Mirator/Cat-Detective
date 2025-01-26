@@ -7,6 +7,7 @@ public class PlayerInteraction : MonoBehaviour
     public GameObject clueTrackerPrefab; // Prefab for a clue tracker item
     public Transform clueTrackerParent; // Parent panel for clue tracker items
     public HelperManager helperManager; // Reference to the HelperManager script
+    public AudioSource audioSource; // Reference to the AudioSource component
 
     private Villager currentVillager;
     private GameObject currentBubble;
@@ -37,8 +38,10 @@ public class PlayerInteraction : MonoBehaviour
                 Villager villager = hit.GetComponent<Villager>();
                 if (villager != null)
                 {
+                    Debug.Log($"Interacted with Villager: {villager.name}");
                     villager.Interact();
                     UpdateClueTracker(villager);
+                    PlayMeowSound(); // Play meow sound on interaction
                 }
             }
             else if (hit.CompareTag("MasterVillager"))
@@ -51,12 +54,15 @@ public class PlayerInteraction : MonoBehaviour
                     return;
                 }
 
+                Debug.Log("Interacted with Master Villager");
                 // Trigger helper text logic
                 helperManager.InteractWithMasterVillager();
+                PlayMeowSound(); // Play meow sound for master villager interaction
 
                 // Show puzzle UI only if it's ready to be shown
                 if (helperManager.ShouldShowPuzzle() && !gamePuzzleManager.puzzleUI.activeSelf)
                 {
+                    Debug.Log("Displaying puzzle UI.");
                     gamePuzzleManager.Initialize();
                     gamePuzzleManager.InteractWithMasterVillager();
                 }
@@ -64,6 +70,28 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Plays the meow sound, ensuring no overlapping sounds.
+    /// </summary>
+    private void PlayMeowSound()
+    {
+        if (audioSource != null)
+        {
+            if (!audioSource.isPlaying)
+            {
+                Debug.Log("Playing meow sound.");
+                audioSource.Play();
+            }
+            else
+            {
+                Debug.Log("Audio is already playing, skipping.");
+            }
+        }
+        else
+        {
+            Debug.LogError("AudioSource is not assigned!");
+        }
+    }
 
     /// <summary>
     /// Updates the clue tracker panel for the interacted villager.
