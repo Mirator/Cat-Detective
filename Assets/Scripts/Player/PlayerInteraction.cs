@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    public float interactionRadius = 1.5f; // Interaction range
+    public float interactionRadius = 0.25f; // Interaction range
     public GameObject clueTrackerPrefab; // Prefab for a clue tracker item
     public Transform clueTrackerParent; // Parent panel for clue tracker items
     public HelperManager helperManager; // Reference to the HelperManager script
@@ -28,6 +28,10 @@ public class PlayerInteraction : MonoBehaviour
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactionRadius);
         foreach (Collider2D hit in hits)
         {
+            float distance = Vector2.Distance(transform.position, hit.transform.position);
+            if (distance > interactionRadius)
+                continue;
+
             if (hit.CompareTag("Villager"))
             {
                 Villager villager = hit.GetComponent<Villager>();
@@ -57,9 +61,9 @@ public class PlayerInteraction : MonoBehaviour
                     gamePuzzleManager.InteractWithMasterVillager();
                 }
             }
-
         }
     }
+
 
     /// <summary>
     /// Updates the clue tracker panel for the interacted villager.
