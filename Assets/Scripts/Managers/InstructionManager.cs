@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro; // Required for TextMeshPro
 
-public class HelperManager : MonoBehaviour
+public class InstructionManager : MonoBehaviour
 {
     public TextMeshProUGUI helperText; // Reference to the TMP Text component of the Helper Canvas
     private bool interactedOnce = false; // Tracks if the master villager was interacted with
@@ -20,7 +20,7 @@ public class HelperManager : MonoBehaviour
         if (!interactedOnce)
         {
             // First interaction with master villager
-            helperText.text = "A kitten wandered into the village. Gather clues from villagers about when and where it was last seen, and where it went next.";
+            helperText.text = "A kitten wandered into the village. Gather clues from villagers about when and where it was last seen, and where it went next. Press H for Help.";
             interactedOnce = true;
         }
         else if (!puzzleTriggered && !gameWon && !gameLost)

@@ -10,7 +10,7 @@ public class GamePuzzleManager : MonoBehaviour
     public GameObject buttonPrefab; // Prefab for a UI button with an Image component
 
     private Location correctFinalLocation; // Correct final location from FinalLocationManager
-    private HelperManager helperManager; // Reference to the HelperManager
+    private InstructionManager instructionManager;
 
     /// <summary>
     /// Initializes the GamePuzzleManager and fetches the final location.
@@ -35,11 +35,10 @@ public class GamePuzzleManager : MonoBehaviour
 
         Debug.Log($"GamePuzzleManager initialized. Correct final location: {correctFinalLocation}");
 
-        // Get reference to the HelperManager
-        helperManager = Object.FindFirstObjectByType<HelperManager>();
-        if (helperManager == null)
+        instructionManager = Object.FindFirstObjectByType<InstructionManager>();
+        if (instructionManager == null)
         {
-            Debug.LogError("HelperManager not found in the scene!");
+            Debug.LogError("InstructionManager not found in the scene!");
             return;
         }
 
@@ -116,13 +115,13 @@ public class GamePuzzleManager : MonoBehaviour
         if (selectedLocation == correctFinalLocation)
         {
             Debug.Log("You Win! Correct final location reached.");
-            helperManager.GameWon(); // Update helper text for win
+            instructionManager.GameWon(); // Update helper text for win
         }
         else
         {
             Debug.Log($"Incorrect location selected: {selectedLocation}. The correct location was: {correctFinalLocation}");
             Debug.Log("Game Over!"); // Lose message
-            helperManager.GameLost(); // Update helper text for loss
+            instructionManager.GameLost(); // Update helper text for loss
         }
 
         // Hide puzzle UI after selection
@@ -140,9 +139,9 @@ public class GamePuzzleManager : MonoBehaviour
             return;
         }
 
-        if (!helperManager.ShouldShowPuzzle())
+        if (!instructionManager.ShouldShowPuzzle())
         {
-            helperManager.InteractWithMasterVillager();
+            instructionManager.InteractWithMasterVillager();
         }
         else
         {

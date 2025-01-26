@@ -6,7 +6,7 @@ public class PlayerInteraction : MonoBehaviour
     public float interactionRadius = 0.25f; // Interaction range
     public GameObject clueTrackerPrefab; // Prefab for a clue tracker item
     public Transform clueTrackerParent; // Parent panel for clue tracker items
-    public HelperManager helperManager; // Reference to the HelperManager script
+    public InstructionManager instructionManager; // Reference to the HelperManager script
     public AudioSource audioSource; // Reference to the AudioSource component
 
     private Villager currentVillager;
@@ -56,11 +56,11 @@ public class PlayerInteraction : MonoBehaviour
 
                 Debug.Log("Interacted with Master Villager");
                 // Trigger helper text logic
-                helperManager.InteractWithMasterVillager();
+                instructionManager.InteractWithMasterVillager();
                 PlayMeowSound(); // Play meow sound for master villager interaction
 
                 // Show puzzle UI only if it's ready to be shown
-                if (helperManager.ShouldShowPuzzle() && !gamePuzzleManager.puzzleUI.activeSelf)
+                if (instructionManager.ShouldShowPuzzle() && !gamePuzzleManager.puzzleUI.activeSelf)
                 {
                     Debug.Log("Displaying puzzle UI.");
                     gamePuzzleManager.Initialize();

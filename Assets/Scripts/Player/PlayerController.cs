@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 movement;
 
+    public HelpManager helpManager; // Reference to the HelpManager script
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -22,6 +24,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             RestartGame();
+        }
+
+        // Toggle help when H is pressed
+        if (Input.GetKeyDown(KeyCode.H) && helpManager != null)
+        {
+            helpManager.ToggleHelp();
         }
     }
 
