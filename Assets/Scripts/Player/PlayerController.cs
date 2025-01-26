@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // Required for scene management
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,11 +17,25 @@ public class PlayerController : MonoBehaviour
         // Get input from keyboard
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
+
+        // Restart the game when R is pressed
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            RestartGame();
+        }
     }
 
     void FixedUpdate()
     {
         // Apply movement to the player
         rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
+    }
+
+    /// <summary>
+    /// Restarts the game by reloading the current scene.
+    /// </summary>
+    void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
