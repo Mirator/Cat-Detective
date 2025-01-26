@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 using TMPro;
 
 public class GamePuzzleManager : MonoBehaviour
@@ -8,8 +7,7 @@ public class GamePuzzleManager : MonoBehaviour
     [Header("UI References")]
     public GameObject puzzleUI; // Reference to the PuzzleUI Canvas
     public Transform buttonContainer; // Parent object for dynamically created buttons
-    public GameObject buttonPrefab; // Prefab for a UI button
-    public TextMeshProUGUI headerText; // Header text for the UI
+    public GameObject buttonPrefab; // Prefab for a UI button with an Image component
 
     private Location correctFinalLocation; // Correct final location from FinalLocationManager
     private HelperManager helperManager; // Reference to the HelperManager
@@ -76,17 +74,26 @@ public class GamePuzzleManager : MonoBehaviour
             // Instantiate a new button from the prefab
             GameObject newButton = Instantiate(buttonPrefab, buttonContainer);
 
-            // Get Button and TextMeshProUGUI components
+            // Get Button, Image, and TextMeshProUGUI components
             Button buttonComponent = newButton.GetComponent<Button>();
+            Image iconImage = newButton.GetComponentInChildren<Image>();
             TextMeshProUGUI buttonText = newButton.GetComponentInChildren<TextMeshProUGUI>();
 
-            if (buttonText != null)
+            // Assign location icon
+            Sprite locationIcon = ClueIconManager.GetIconForLocation(location);
+            if (locationIcon != null && iconImage != null)
             {
-                buttonText.text = location.ToString(); // Set button label to location name
+                iconImage.sprite = locationIcon; // Set button icon
             }
             else
             {
-                Debug.LogError($"PuzzleManager: No TextMeshProUGUI component found in {buttonPrefab.name} prefab!");
+                Debug.LogWarning($"No icon found for location: {location}");
+            }
+
+            // Optionally hide the text label if not needed
+            if (buttonText != null)
+            {
+                buttonText.text = ""; // Clear text label
             }
 
             if (buttonComponent != null)
@@ -149,7 +156,6 @@ public class GamePuzzleManager : MonoBehaviour
             GenerateLocationButtons();
 
             puzzleUI.SetActive(true);
-            headerText.text = "Choose a Location:"; // Update the header text
         }
     }
 }
